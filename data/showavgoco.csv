@@ -1,0 +1,53 @@
+city,showavgo,totalavgo,venue,lon,lat
+Amsterdam,0.57,0.57,"AFAS Live, Amsterdam, Netherlands",4.9446128,52.3123229
+Paris,0.6,0.57,"Adidas Arena, Paris, France",2.3606054,48.8995893
+London 4,0.59,0.57,"O2 Academy Brixton, London, England",-0.1149344,51.4651626
+London 3,0.53,0.57,"O2 Academy Brixton, London, England",-0.1149344,51.4651626
+Glasgow,0.63,0.57,"The OVO Hydro, Glasgow, Scotland",-4.285587,55.8596207
+Wolverhampton,0.59,0.57,"Civic Hall, Wolverhampton, England",-2.1304074,52.58669829999999
+London 2,0.55,0.57,"Eventim Apollo, London, England",-0.2246102,51.4909927
+London 1,0.59,0.57,"Eventim Apollo, London, England",-0.2246102,51.4909927
+Manchester 2,0.52,0.57,"O2 Apollo Manchester, Manchester, England",-2.2221418,53.4695675
+Manchester 1,0.61,0.57,"O2 Apollo Manchester, Manchester, England",-2.2221418,53.4695675
+Dublin,0.58,0.57,"3Arena, Dublin, Ireland",-6.2285078,53.3474963
+Austin 2,0.57,0.57,"Moody Center, Austin, TX, USA",-97.7306618,30.2809699
+St. Augustine,0.63,0.57,"St. Augustine Amphitheatre, St. Augustine, FL, USA",-81.2829589,29.8753089
+Atlanta,0.58,0.57,"Cadence Bank Amphitheatre at Chastain Park, Atlanta, GA, USA",-84.39695859999999,33.8769723
+Nashville,0.65,0.57,"Ascend Amphitheater, Nashville, TN, USA",-86.77148799999999,36.1597
+Raleigh,0.61,0.57,"Red Hat Amphitheater, Raleigh, NC, USA",-78.6431351,35.7737503
+Wilmington,0.59,0.57,"Live Oak Bank Pavilion, Wilmington, NC, USA",-77.9510583,34.2484178
+New York 2,0.43,0.57,"Madison Square Garden, New York, NY, USA",-73.9934387,40.7505045
+New York 1,0.53,0.57,"Madison Square Garden, New York, NY, USA",-73.9934387,40.7505045
+Charlottesville,0.59,0.57,"Ting Pavilion, Charlottesville, VA, USA",-78.4766758,38.0292483
+Washington 2,0.54,0.57,"The Anthem, Washington, DC, USA",-77.0260611,38.8800674
+Washington 1,0.58,0.57,"The Anthem, Washington, DC, USA",-77.0260611,38.8800674
+Philadelphia,0.53,0.57,"TD Pavilion at the Mann, Philadelphia, PA, USA",-75.22292829999999,39.9834489
+Boston,0.65,0.57,"TD Garden, Boston, MA, USA",-71.062146,42.366198
+Laval,0.56,0.57,"Place Bell, Laval, QC, Canada",-73.72122949999999,45.556137
+Toronto,0.62,0.57,"Budweiser Stage, Toronto, ON, Canada",-79.4152185,43.62927
+Rochester Hills,0.6,0.57,"Meadow Brook Amphitheatre, Rochester Hills, MI, USA",-83.2027282,42.6762008
+Indianapolis,0.54,0.57,"Everwise Amphitheater at White River State Park, Indianapolis, IN, USA",-86.171933,39.7659212
+Cincinnati,0.57,0.57,"The ICON Festival Stage at Smale Park, Cincinnati, OH, USA",-84.51289609999999,39.0957098
+Cuyahoga Falls,0.61,0.57,"Blossom Music Center, Cuyahoga Falls, OH, USA",-81.5606615,41.1913055
+Milwaukee,0.55,0.57,"BMO Pavilion, Milwaukee, WI, USA",-87.8966286,43.028513
+Minneapolis 2,0.57,0.57,"Minneapolis Armory, Minneapolis, MN, USA",-93.2635268,44.9752026
+Minneapolis 1,0.52,0.57,"Minneapolis Armory, Minneapolis, MN, USA",-93.2635268,44.9752026
+Chicago 2,0.57,0.57,"Huntington Bank Pavilion at Northerly Island, Chicago, IL, USA",-87.60879469999999,41.8629813
+Chicago 1,0.61,0.57,"Huntington Bank Pavilion at Northerly Island, Chicago, IL, USA",-87.60879469999999,41.8629813
+Maryland Heights,0.52,0.57,"Saint Louis Music Park, Maryland Heights, MO, USA",-90.47747509999999,38.7504256
+Lincoln,0.59,0.57,"Pinewood Bowl Amphitheater, Lincoln, NE, USA",-96.7610263,40.7764106
+Kansas City,0.56,0.57,"Starlight Theater, Kansas City, MO, USA",-94.53282209999999,39.00745440000001
+Dillon,0.57,0.57,"Dillon Amphitheater, Dillon, CO, USA",-106.0471067,39.6260727
+Morrison,0.6,0.57,"Red Rocks Amphitheatre, Morrison, CO, USA",-105.2052116,39.6655381
+Bonner 2,0.5,0.57,"KettleHouse Amphitheater, Bonner, MT, USA",-113.8617248,46.8755609
+Bonner 1,0.54,0.57,"KettleHouse Amphitheater, Bonner, MT, USA",-113.8617248,46.8755609
+Seattle,0.63,0.57,"Climate Pledge Arena, Seattle, WA, USA",-122.3540714,47.62207129999999
+Bend,0.56,0.57,"Hayden Homes Amphitheater, Bend, OR, USA",-121.3181815,44.0470973
+Burnaby,0.57,0.57,"Deer Lake Park, Burnaby, BC, Canada",-122.9651215,49.2349629
+Berkeley 2,0.48,0.57,"William Randolph Hearst Greek Theatre, Berkeley, CA, USA",-122.2544715,37.8735759
+Berkeley 1,0.57,0.57,"William Randolph Hearst Greek Theatre, Berkeley, CA, USA",-122.2544715,37.8735759
+Los Angeles,0.58,0.57,"Hollywood Bowl, Los Angeles, CA, USA",-118.3391279,34.112224
+San Diego,0.56,0.57,"Cal Coast Credit Union Amphitheater, San Diego, CA, USA",-117.0712482,32.7745631
+Phoenix,0.59,0.57,"Arizona Financial Theatre, Phoenix, AZ, USA",-112.0791631,33.4484874
+Irving,0.6,0.57,"The Pavilion at Toyota Music Factory, Irving, TX, USA",-96.9446358,32.8734149
+Houston,0.59,0.57,"713 Music Hall, Houston, TX, USA",-95.3640468,29.765774
