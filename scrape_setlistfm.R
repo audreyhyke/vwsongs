@@ -312,7 +312,7 @@ vwc1 <- vwdc %>%
 
 library(ggmap)
 
-ggmap::register_google("AIzaSyBcCSb9FXdwOHETbgVMfA9eAcchuRQ9uvI")
+
 
 venues <- as.data.frame(unique(vwc1$venue))
 
