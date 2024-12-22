@@ -3,7 +3,7 @@ library(ggpubr)
 library(factoextra)
 
 load("data/ClusteringAuto.RData")
-simmat <- read.csv("data/similaritymatrixdc.csv",check.names=FALSE,row.names = T)
+simmat <- read.csv("data/similaritymatrixdc.csv",check.names=FALSE)
 rownames(simmat) <- colnames(simmat)
 
 list_clusters <- function(simmat,song,clust,clustassign){
@@ -16,3 +16,6 @@ plot_clusters <- function(kmeans_result,simmat,clust){
                ggtheme = theme_bw()
   )
 }
+
+list_clusters(simmat, "Step",10,clustassign)
+plot_clusters(kmeans_results,simmat,10)

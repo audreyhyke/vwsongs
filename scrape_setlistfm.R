@@ -161,13 +161,10 @@ vwna <- cbind(vwna,city)
 write_csv(vwna,"vw_setlist_na_city.csv")
 
 
-vwc <- read_csv("vw_setlist_na_city.csv")
+vwc <- read_csv("data/vw_setlist_na_city.csv")
 
 
-
-
-
-write_csv(vwna, file = "vw_setlist_na.csv")
+write_csv(vwna, file = "data/vw_setlist_na.csv")
 
 songs <- vwd[,1]
 
@@ -397,8 +394,8 @@ library(leaflet)
 
 mytext <- paste(
   "Overlap: ", showavgoco$showavgo, "<br/>", 
-  "Show: ", showavgoco$city, "<br/>", 
-  "Date: ", showavgoco$date, sep="") %>%
+  "Show: ", showavgoco$city.y, "<br/>", 
+  "Date: ", showavgoco$date1, ", 2024", sep="") %>%
   lapply(htmltools::HTML)
 
 # Final Map
@@ -440,10 +437,10 @@ leaflet() %>%
 
 save(showavgoco,mybins,mypalette,mytext, file = "data/overlapmap.RData")
 
-write_csv(vwr,file = "vwallcoords.csv")
+write_csv(vwd,file = "vwallcoords.csv")
 write_csv(showavgoco, "showavg.csv")
 
-vwr <- read_csv("data/vwallcoords.csv")
+vwd <- read_csv("data/vwallcoords.csv")
 showavgoco <- unique(vwr[c("venue.x","city","month","day","lon","lat","showavgo")])
 showavgoco <- cbind(showavgoco,round(mean(showavgoco$showavgo),2))
 
@@ -459,15 +456,18 @@ numF <- 18
 numOG <- 10
 
 
-vwd <- vwr %>%
+vwd <- vwd %>%
   mutate(
     date = as.Date(paste(month," ",day, " 24"),format = "%b %d %y")
   )
 
+vwd<- vwd %>%
+  left_join(albumcolors,by = "album")
 
 
-album_percentages <- vwr %>%
-  group_by(city.y, album) %>% 
+
+album_percentages <- vwd %>%
+  group_by(city.y, album,col) %>% 
   summarize(count = n(), .groups = "drop") %>% # Count songs per album per city
   group_by(city.y) %>% 
   mutate(percentage = (count / sum(count)))
@@ -479,19 +479,22 @@ citydate$num <- seq(1,52)
 album_percentages <- album_percentages %>%
   left_join(citydate, by = c("city.y" = "city.y"))
 
+save(album_percentages,file = "data/album_per.RData")
+
 
 album_percentages %>% 
   ggplot(aes(x = num, y = percentage, fill = album)) +
   geom_area()
 
 
-print(album_percentages %>%
-  group_by(city.y) %>% 
-  summarize(count = sum(percentage)), n = 52)
-
 
 ggplot(album_percentages, aes(num, fill = album)) +
-  geom_density(position = "fill")
+  geom_density(position = "fill")+
+  scale_fill_manual(values = album_percentages$col)
+
+ggplot(album_percentages, aes(x = num, y = percentage, fill = album)) +
+  geom_bar(stat = "identity", position = "stack") +  # Bar plot reflecting percentages
+  scale_fill_manual(values = album_percentages$col)
 
 print(vwd %>%
   filter(
@@ -518,6 +521,12 @@ ogcol <- "#546C98"
 fcol <- "#479A53"
 mcol <- "#828282"
 otcol <- "#E96586"
+
+albumcolors <- as.data.frame(cbind(c("Contra","Vampire Weekend","Only God Was Above Us","Father of the Bride","Modern Vampires of the City","Other"),c(ccol,vwcol,ogcol,fcol,mcol,otcol)))
+
+colnames(albumcolors) <- c("album","col")
+
+save(albumcolors, file = "data/albumcolors.RData")
 
 album_percentages$album <- factor(album_percentages$album, levels=rev(c("Only God Was Above Us", "Vampire Weekend", "Father of the Bride", "Modern Vampires of the City", "Contra", "Other")))
 
@@ -913,9 +922,9 @@ for(i in 1:dim(given)[1]){
 colnames(given) <- colnames(similarity_matrix)
 rownames(given) <- rownames(similarity_matrix)
 
-write_csv(data.frame(given),file = "given.csv")
+write_csv(data.frame(given),file = "data/given.csv")
 
-given <- as.data.frame(read_csv("given.csv"))
+given <- as.data.frame(read_csv("data/given.csv"))
 
 rownames(given)<- colnames(given)
 
@@ -1075,5 +1084,181 @@ rownames(similaritymatrixdc) <- colnames(similaritymatrixdc)
 
 write.table(similaritymatrixdc,file = "similaritymatrixdc.csv",row.names = T)
 
+other <- as.data.frame(unique(cbind(vwd$month,vwd$day,vwd$city.y)))
 
+colnames(other) <- c("month","day","city.y")
+
+other <- other %>%
+  mutate(
+    date1 = paste(other$month,other$day)
+  )
+
+new <- showavgoco %>%
+  mutate(
+    date1 = paste(showavgoco$month,showavgoco$day),
+    totalavg = showavgoco$`round(mean(showavgoco$showavgo), 2)`
+  )
+showavgoco <- new %>%
+  left_join(
+    other, by = "date1"
+  ) %>%
+  select(
+    date1,city.y,lon,lat,venue.x,showavgo, totalavg
+  )
+
+left_join(new,other, by = date1)
+
+
+library(stringr)
+
+### NEXT SONG CHANCE
+
+vwd <- vwallcoords
+
+song_show <- as.data.frame(cbind(vwd$sets,vwd$city.y,vwd$song_num))
+
+save(song_show,file = "data/songshow.RData")
+
+colnames(song_show) <- c("sets","city.y","song_num")
+
+song_show_wide <- song_show %>%
+  pivot_wider(
+    names_from = city.y,
+    values_from = sets
+  ) 
+
+save(song_show_wide,file = "data/song_shows.RData")
+
+song_show_wide <- song_show_wide[,-1]
+
+song_show_NA <- as.data.frame(song_show_wide)
+
+max_songs <- 41
+
+
+# songs <- as.data.frame(song_show_wide)[,1] %>%
+#   purrr::keep(~ length(.x) > 0) %>%
+#   unlist()
+# 
+# song_show_NA <- c(songs,rep("no song, because it was the end of the show",max_songs - length(songs)))
+# 
+# 
+# for(show in 2:ncol(song_show_wide)){
+#   
+#   songs <- as.data.frame(song_show_wide)[,show] %>%
+#     purrr::keep(~ length(.x) > 0) %>%
+#     unlist()
+#   songs <- c(songs,rep("no song, because it was the end of the show",max_songs - length(songs)))
+#   
+#   song_show_NA <- cbind(song_show_NA,songs)
+#   
+#   
+# }
+# 
+# song_show_NA <- as.data.frame(song_show_NA)
+# 
+# song_show_list <- unlist(song_show_NA)
+
+
+song_show_N <- rbind(song_show_wide,rep("nothing, because it was the end of the show"))
+
+song_show_N <- unname(unlist(song_show_N))
+
+names_songs <- unique(vwd$sets)
+
+song_next <- list(c(song_show_N[which(song_show_N == names_songs[1])+1]))
+
+for(i in 2:(length(names_songs))){
+  song_next <- append(song_next,list(c(song_show_N[which(song_show_N == names_songs[i])+1])))
+}
+
+names(song_next) <- names_songs
+
+save(song_next,file = "data/nextsongs.RData")
+
+x <- list("x")
+
+append(x,list(table(song_next$Cousins) / length(song_next$Cousins)))
+
+
+# song_next_per <- song_next[[1]] %>%
+#   table() %>%
+#   sort(decreasing = TRUE) %>%
+#   as.data.frame() %>%
+#   mutate(
+#     Percentage = round(Freq / sum(Freq) * 100, 2),
+#     Description = paste0(Var1, ": ", Percentage, " percent chance (", Freq, " out of ", sum(Freq), " times)")
+#   ) %>%
+#   pull(Description)
+
+
+song_next_per <- list(paste(names(rev(sort(table(song_next[1])))),": ",round(rev(sort(table(song_next[1]))) / length(song_next[1][[1]]),2)*100," percent chance (",rev(sort(table(song_next[1])))," out of ",length(song_next[1][[1]])," times)",sep=""))
+
+names(song_next_per) <- names(song_next[i])
+
+
+for(i in 2:length(song_next)){
+  
+  next_per <- list(paste(names(rev(sort(table(song_next[i])))),": ",round(rev(sort(table(song_next[i]))) / length(song_next[i][[1]]),2)*100," percent chance (",rev(sort(table(song_next[i])))," out of ",length(song_next[i][[1]])," times)",sep=""))
+  
+  names(next_per) <- names(song_next[i])
+  
+  song_next_per <- append(song_next_per,next_per)
+}
+
+
+save(song_next,song_next_per,file = "data/nextsongs.RData")
+
+
+setlist_albums_songs <- vwd %>%
+  select(
+    city.y,album,sets
+  ) %>%
+  left_join(albumcolors,by = "album")
+
+
+left_join(setlist_albums_songs,albumcolors,by = "album")
+
+
+
+save(setlist_albums,setlist_albums_songs,file = "data/setlistalbums.RData")
+
+
+set_fest <- vwc %>%
+  filter(
+    (city %in% c("Saint Charles",
+                  "Austin", 
+                  "New Orleans", 
+                  "Salt Lake City",
+                  "Luton",
+                  "Barcelona")),
+    !(month %in% c("Oct"))
+  )
+
+set_fest$city.y <- ifelse(set_fest$city == "Austin","Austin 1",set_fest$city)
+
+set_fest_cas <- set_fest %>%
+  select(
+    city.y,album,sets
+  )
+
+set_cas <- vwd %>%
+  select(
+    city.y,album,sets
+  )
+
+all_sets <- rbind(set_fest_cas,set_cas)
+
+
+all_sets_col <- all_sets %>%
+  left_join(albumcolors,by = "album")
+
+setlist_albums_songs <- all_sets_col
+
+save(setlist_albums_songs,file = "data/setlistalbums.RData")
+
+song_show <- setlist_albums_songs %>%
+  select(
+    city.y,sets
+  )
 
