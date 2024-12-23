@@ -465,6 +465,7 @@ vwd<- vwd %>%
   left_join(albumcolors,by = "album")
 
 
+citydate$num <- rev(1:52)
 
 album_percentages <- vwd %>%
   group_by(city.y, album,col) %>% 
@@ -474,7 +475,7 @@ album_percentages <- vwd %>%
 
 citydate <- unique(vwd[,c("city.y","date")])
 
-citydate$num <- seq(1,52)
+citydate$num <- rev(seq(1,52))
 
 album_percentages <- album_percentages %>%
   left_join(citydate, by = c("city.y" = "city.y"))
