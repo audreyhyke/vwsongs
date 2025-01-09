@@ -29,11 +29,11 @@ pheatmap(given,
 
 
 percent_given <- function(given,song1,song2){
-  return(given[which(colnames(given) == song1),which(colnames(given) == song2)])
+  return(round(given[which(colnames(given) == song1),which(colnames(given) == song2)],2))
 }
 
 all_percent_given <- function(given,song){
-  return(cbind(rownames(given),round(given[,which(colnames(given) == song)],2)))
+  return(cbind(rownames(given),t(round(given[which(colnames(given) == song),],2))))
 }
 
 percent_given(given,"Connect","Sympathy")

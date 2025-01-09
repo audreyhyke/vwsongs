@@ -1120,6 +1120,8 @@ song_show <- as.data.frame(cbind(vwd$sets,vwd$city.y,vwd$song_num))
 
 save(song_show,file = "data/songshow.RData")
 
+song_show <- as.data.frame(song_show)
+
 colnames(song_show) <- c("sets","city.y","song_num")
 
 song_show_wide <- song_show %>%
