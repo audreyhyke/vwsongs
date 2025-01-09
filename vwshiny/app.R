@@ -419,7 +419,7 @@ server <- function(input, output) {
     
     output$dend <- renderImage(
       {
-        list(src = "~/vwsongs/data/dendrogram.png", alt = "Dendrogram", width = "1000px")}
+        list(src = "data/dendrogram.png", alt = "Dendrogram", width = "1000px")}
       
       , deleteFile = FALSE
     )
