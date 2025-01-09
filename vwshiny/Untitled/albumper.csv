@@ -1,0 +1,295 @@
+city,album,count,percentage,date,num
+Amsterdam,Contra,2,0.08,2024-12-15,1
+Amsterdam,Father of the Bride,5,0.2,2024-12-15,1
+Amsterdam,Modern Vampires of the City,5,0.2,2024-12-15,1
+Amsterdam,Only God Was Above Us,9,0.36,2024-12-15,1
+Amsterdam,Vampire Weekend,4,0.16,2024-12-15,1
+Atlanta,Contra,2,0.08333333333333333,2024-10-12,14
+Atlanta,Father of the Bride,4,0.16666666666666666,2024-10-12,14
+Atlanta,Modern Vampires of the City,3,0.125,2024-10-12,14
+Atlanta,Only God Was Above Us,8,0.3333333333333333,2024-10-12,14
+Atlanta,Other,1,0.041666666666666664,2024-10-12,14
+Atlanta,Vampire Weekend,6,0.25,2024-10-12,14
+Austin 2,Contra,3,0.11538461538461539,2024-10-17,12
+Austin 2,Father of the Bride,4,0.15384615384615385,2024-10-17,12
+Austin 2,Modern Vampires of the City,3,0.11538461538461539,2024-10-17,12
+Austin 2,Only God Was Above Us,9,0.34615384615384615,2024-10-17,12
+Austin 2,Other,2,0.07692307692307693,2024-10-17,12
+Austin 2,Vampire Weekend,5,0.19230769230769232,2024-10-17,12
+Bend,Contra,1,0.045454545454545456,2024-06-19,44
+Bend,Father of the Bride,4,0.18181818181818182,2024-06-19,44
+Bend,Modern Vampires of the City,4,0.18181818181818182,2024-06-19,44
+Bend,Only God Was Above Us,7,0.3181818181818182,2024-06-19,44
+Bend,Vampire Weekend,6,0.2727272727272727,2024-06-19,44
+Berkeley 1,Contra,2,0.08333333333333333,2024-06-15,47
+Berkeley 1,Father of the Bride,4,0.16666666666666666,2024-06-15,47
+Berkeley 1,Modern Vampires of the City,4,0.16666666666666666,2024-06-15,47
+Berkeley 1,Only God Was Above Us,9,0.375,2024-06-15,47
+Berkeley 1,Other,1,0.041666666666666664,2024-06-15,47
+Berkeley 1,Vampire Weekend,4,0.16666666666666666,2024-06-15,47
+Berkeley 2,Contra,2,0.07692307692307693,2024-06-16,46
+Berkeley 2,Father of the Bride,6,0.23076923076923078,2024-06-16,46
+Berkeley 2,Modern Vampires of the City,4,0.15384615384615385,2024-06-16,46
+Berkeley 2,Only God Was Above Us,7,0.2692307692307692,2024-06-16,46
+Berkeley 2,Vampire Weekend,7,0.2692307692307692,2024-06-16,46
+Bonner 1,Contra,2,0.09090909090909091,2024-06-22,42
+Bonner 1,Father of the Bride,4,0.18181818181818182,2024-06-22,42
+Bonner 1,Modern Vampires of the City,3,0.13636363636363635,2024-06-22,42
+Bonner 1,Only God Was Above Us,7,0.3181818181818182,2024-06-22,42
+Bonner 1,Other,2,0.09090909090909091,2024-06-22,42
+Bonner 1,Vampire Weekend,4,0.18181818181818182,2024-06-22,42
+Bonner 2,Contra,2,0.08,2024-06-23,41
+Bonner 2,Father of the Bride,5,0.2,2024-06-23,41
+Bonner 2,Modern Vampires of the City,3,0.12,2024-06-23,41
+Bonner 2,Only God Was Above Us,8,0.32,2024-06-23,41
+Bonner 2,Other,1,0.04,2024-06-23,41
+Bonner 2,Vampire Weekend,6,0.24,2024-06-23,41
+Boston,Contra,4,0.14814814814814814,2024-09-27,24
+Boston,Father of the Bride,4,0.14814814814814814,2024-09-27,24
+Boston,Modern Vampires of the City,3,0.1111111111111111,2024-09-27,24
+Boston,Only God Was Above Us,8,0.2962962962962963,2024-09-27,24
+Boston,Other,1,0.037037037037037035,2024-09-27,24
+Boston,Vampire Weekend,7,0.25925925925925924,2024-09-27,24
+Burnaby,Contra,2,0.09090909090909091,2024-06-18,45
+Burnaby,Father of the Bride,4,0.18181818181818182,2024-06-18,45
+Burnaby,Modern Vampires of the City,3,0.13636363636363635,2024-06-18,45
+Burnaby,Only God Was Above Us,8,0.36363636363636365,2024-06-18,45
+Burnaby,Other,1,0.045454545454545456,2024-06-18,45
+Burnaby,Vampire Weekend,4,0.18181818181818182,2024-06-18,45
+Charlottesville,Contra,4,0.16,2024-10-02,20
+Charlottesville,Father of the Bride,4,0.16,2024-10-02,20
+Charlottesville,Modern Vampires of the City,4,0.16,2024-10-02,20
+Charlottesville,Only God Was Above Us,8,0.32,2024-10-02,20
+Charlottesville,Other,1,0.04,2024-10-02,20
+Charlottesville,Vampire Weekend,4,0.16,2024-10-02,20
+Chicago 1,Contra,3,0.13043478260869565,2024-07-26,35
+Chicago 1,Father of the Bride,5,0.21739130434782608,2024-07-26,35
+Chicago 1,Modern Vampires of the City,2,0.08695652173913043,2024-07-26,35
+Chicago 1,Only God Was Above Us,9,0.391304347826087,2024-07-26,35
+Chicago 1,Vampire Weekend,4,0.17391304347826086,2024-07-26,35
+Chicago 2,Contra,1,0.04,2024-07-27,34
+Chicago 2,Father of the Bride,5,0.2,2024-07-27,34
+Chicago 2,Modern Vampires of the City,3,0.12,2024-07-27,34
+Chicago 2,Only God Was Above Us,9,0.36,2024-07-27,34
+Chicago 2,Other,2,0.08,2024-07-27,34
+Chicago 2,Vampire Weekend,5,0.2,2024-07-27,34
+Cincinnati,Contra,1,0.043478260869565216,2024-09-20,29
+Cincinnati,Father of the Bride,3,0.13043478260869565,2024-09-20,29
+Cincinnati,Modern Vampires of the City,5,0.21739130434782608,2024-09-20,29
+Cincinnati,Only God Was Above Us,9,0.391304347826087,2024-09-20,29
+Cincinnati,Other,1,0.043478260869565216,2024-09-20,29
+Cincinnati,Vampire Weekend,4,0.17391304347826086,2024-09-20,29
+Cuyahoga Falls,Contra,2,0.08333333333333333,2024-09-19,30
+Cuyahoga Falls,Father of the Bride,5,0.20833333333333334,2024-09-19,30
+Cuyahoga Falls,Modern Vampires of the City,1,0.041666666666666664,2024-09-19,30
+Cuyahoga Falls,Only God Was Above Us,9,0.375,2024-09-19,30
+Cuyahoga Falls,Other,1,0.041666666666666664,2024-09-19,30
+Cuyahoga Falls,Vampire Weekend,6,0.25,2024-09-19,30
+Dillon,Contra,3,0.11538461538461539,2024-07-20,39
+Dillon,Father of the Bride,4,0.15384615384615385,2024-07-20,39
+Dillon,Modern Vampires of the City,3,0.11538461538461539,2024-07-20,39
+Dillon,Only God Was Above Us,9,0.34615384615384615,2024-07-20,39
+Dillon,Other,1,0.038461538461538464,2024-07-20,39
+Dillon,Vampire Weekend,6,0.23076923076923078,2024-07-20,39
+Dublin,Contra,2,0.07692307692307693,2024-11-29,11
+Dublin,Father of the Bride,4,0.15384615384615385,2024-11-29,11
+Dublin,Modern Vampires of the City,5,0.19230769230769232,2024-11-29,11
+Dublin,Only God Was Above Us,9,0.34615384615384615,2024-11-29,11
+Dublin,Other,2,0.07692307692307693,2024-11-29,11
+Dublin,Vampire Weekend,4,0.15384615384615385,2024-11-29,11
+Glasgow,Contra,2,0.08,2024-12-08,5
+Glasgow,Father of the Bride,3,0.12,2024-12-08,5
+Glasgow,Modern Vampires of the City,4,0.16,2024-12-08,5
+Glasgow,Only God Was Above Us,9,0.36,2024-12-08,5
+Glasgow,Other,1,0.04,2024-12-08,5
+Glasgow,Vampire Weekend,6,0.24,2024-12-08,5
+Houston,Contra,3,0.125,2024-06-06,52
+Houston,Father of the Bride,5,0.20833333333333334,2024-06-06,52
+Houston,Modern Vampires of the City,3,0.125,2024-06-06,52
+Houston,Only God Was Above Us,9,0.375,2024-06-06,52
+Houston,Vampire Weekend,4,0.16666666666666666,2024-06-06,52
+Indianapolis,Contra,2,0.08333333333333333,2024-09-21,28
+Indianapolis,Father of the Bride,5,0.20833333333333334,2024-09-21,28
+Indianapolis,Modern Vampires of the City,2,0.08333333333333333,2024-09-21,28
+Indianapolis,Only God Was Above Us,8,0.3333333333333333,2024-09-21,28
+Indianapolis,Vampire Weekend,7,0.2916666666666667,2024-09-21,28
+Irving,Contra,1,0.045454545454545456,2024-06-07,51
+Irving,Father of the Bride,5,0.22727272727272727,2024-06-07,51
+Irving,Modern Vampires of the City,2,0.09090909090909091,2024-06-07,51
+Irving,Only God Was Above Us,8,0.36363636363636365,2024-06-07,51
+Irving,Vampire Weekend,6,0.2727272727272727,2024-06-07,51
+Kansas City,Contra,3,0.12,2024-07-22,38
+Kansas City,Father of the Bride,7,0.28,2024-07-22,38
+Kansas City,Modern Vampires of the City,3,0.12,2024-07-22,38
+Kansas City,Only God Was Above Us,8,0.32,2024-07-22,38
+Kansas City,Vampire Weekend,4,0.16,2024-07-22,38
+Laval,Contra,2,0.07692307692307693,2024-09-25,25
+Laval,Father of the Bride,4,0.15384615384615385,2024-09-25,25
+Laval,Modern Vampires of the City,3,0.11538461538461539,2024-09-25,25
+Laval,Only God Was Above Us,9,0.34615384615384615,2024-09-25,25
+Laval,Other,3,0.11538461538461539,2024-09-25,25
+Laval,Vampire Weekend,5,0.19230769230769232,2024-09-25,25
+Lincoln,Contra,1,0.045454545454545456,2024-07-23,37
+Lincoln,Father of the Bride,3,0.13636363636363635,2024-07-23,37
+Lincoln,Modern Vampires of the City,4,0.18181818181818182,2024-07-23,37
+Lincoln,Only God Was Above Us,9,0.4090909090909091,2024-07-23,37
+Lincoln,Other,1,0.045454545454545456,2024-07-23,37
+Lincoln,Vampire Weekend,4,0.18181818181818182,2024-07-23,37
+London 1,Contra,4,0.16666666666666666,2024-12-04,8
+London 1,Father of the Bride,5,0.20833333333333334,2024-12-04,8
+London 1,Modern Vampires of the City,2,0.08333333333333333,2024-12-04,8
+London 1,Only God Was Above Us,9,0.375,2024-12-04,8
+London 1,Vampire Weekend,4,0.16666666666666666,2024-12-04,8
+London 2,Contra,2,0.07692307692307693,2024-12-05,7
+London 2,Father of the Bride,4,0.15384615384615385,2024-12-05,7
+London 2,Modern Vampires of the City,5,0.19230769230769232,2024-12-05,7
+London 2,Only God Was Above Us,9,0.34615384615384615,2024-12-05,7
+London 2,Other,2,0.07692307692307693,2024-12-05,7
+London 2,Vampire Weekend,4,0.15384615384615385,2024-12-05,7
+London 3,Contra,1,0.041666666666666664,2024-12-10,4
+London 3,Father of the Bride,4,0.16666666666666666,2024-12-10,4
+London 3,Modern Vampires of the City,4,0.16666666666666666,2024-12-10,4
+London 3,Only God Was Above Us,9,0.375,2024-12-10,4
+London 3,Other,2,0.08333333333333333,2024-12-10,4
+London 3,Vampire Weekend,4,0.16666666666666666,2024-12-10,4
+London 4,Contra,3,0.125,2024-12-11,3
+London 4,Father of the Bride,4,0.16666666666666666,2024-12-11,3
+London 4,Modern Vampires of the City,4,0.16666666666666666,2024-12-11,3
+London 4,Only God Was Above Us,8,0.3333333333333333,2024-12-11,3
+London 4,Vampire Weekend,5,0.20833333333333334,2024-12-11,3
+Los Angeles,Contra,4,0.15384615384615385,2024-06-12,48
+Los Angeles,Father of the Bride,4,0.15384615384615385,2024-06-12,48
+Los Angeles,Modern Vampires of the City,2,0.07692307692307693,2024-06-12,48
+Los Angeles,Only God Was Above Us,9,0.34615384615384615,2024-06-12,48
+Los Angeles,Other,3,0.11538461538461539,2024-06-12,48
+Los Angeles,Vampire Weekend,4,0.15384615384615385,2024-06-12,48
+Manchester 1,Contra,3,0.12,2024-12-01,10
+Manchester 1,Father of the Bride,4,0.16,2024-12-01,10
+Manchester 1,Modern Vampires of the City,4,0.16,2024-12-01,10
+Manchester 1,Only God Was Above Us,8,0.32,2024-12-01,10
+Manchester 1,Vampire Weekend,6,0.24,2024-12-01,10
+Manchester 2,Contra,1,0.045454545454545456,2024-12-02,9
+Manchester 2,Father of the Bride,3,0.13636363636363635,2024-12-02,9
+Manchester 2,Modern Vampires of the City,4,0.18181818181818182,2024-12-02,9
+Manchester 2,Only God Was Above Us,8,0.36363636363636365,2024-12-02,9
+Manchester 2,Other,1,0.045454545454545456,2024-12-02,9
+Manchester 2,Vampire Weekend,5,0.22727272727272727,2024-12-02,9
+Maryland Heights,Contra,2,0.08,2024-07-25,36
+Maryland Heights,Father of the Bride,3,0.12,2024-07-25,36
+Maryland Heights,Modern Vampires of the City,5,0.2,2024-07-25,36
+Maryland Heights,Only God Was Above Us,8,0.32,2024-07-25,36
+Maryland Heights,Other,3,0.12,2024-07-25,36
+Maryland Heights,Vampire Weekend,4,0.16,2024-07-25,36
+Milwaukee,Contra,5,0.20833333333333334,2024-08-01,31
+Milwaukee,Father of the Bride,4,0.16666666666666666,2024-08-01,31
+Milwaukee,Modern Vampires of the City,2,0.08333333333333333,2024-08-01,31
+Milwaukee,Only God Was Above Us,9,0.375,2024-08-01,31
+Milwaukee,Vampire Weekend,4,0.16666666666666666,2024-08-01,31
+Minneapolis 1,Contra,3,0.13636363636363635,2024-07-30,33
+Minneapolis 1,Father of the Bride,4,0.18181818181818182,2024-07-30,33
+Minneapolis 1,Modern Vampires of the City,4,0.18181818181818182,2024-07-30,33
+Minneapolis 1,Only God Was Above Us,8,0.36363636363636365,2024-07-30,33
+Minneapolis 1,Vampire Weekend,3,0.13636363636363635,2024-07-30,33
+Minneapolis 2,Contra,2,0.08333333333333333,2024-07-31,32
+Minneapolis 2,Father of the Bride,4,0.16666666666666666,2024-07-31,32
+Minneapolis 2,Modern Vampires of the City,3,0.125,2024-07-31,32
+Minneapolis 2,Only God Was Above Us,8,0.3333333333333333,2024-07-31,32
+Minneapolis 2,Other,2,0.08333333333333333,2024-07-31,32
+Minneapolis 2,Vampire Weekend,5,0.20833333333333334,2024-07-31,32
+Morrison,Contra,2,0.09090909090909091,2024-07-19,40
+Morrison,Father of the Bride,4,0.18181818181818182,2024-07-19,40
+Morrison,Modern Vampires of the City,2,0.09090909090909091,2024-07-19,40
+Morrison,Only God Was Above Us,9,0.4090909090909091,2024-07-19,40
+Morrison,Other,2,0.09090909090909091,2024-07-19,40
+Morrison,Vampire Weekend,3,0.13636363636363635,2024-07-19,40
+Nashville,Contra,3,0.125,2024-10-11,15
+Nashville,Father of the Bride,4,0.16666666666666666,2024-10-11,15
+Nashville,Modern Vampires of the City,2,0.08333333333333333,2024-10-11,15
+Nashville,Only God Was Above Us,9,0.375,2024-10-11,15
+Nashville,Other,1,0.041666666666666664,2024-10-11,15
+Nashville,Vampire Weekend,5,0.20833333333333334,2024-10-11,15
+New York 1,Contra,3,0.13043478260869565,2024-10-05,19
+New York 1,Father of the Bride,4,0.17391304347826086,2024-10-05,19
+New York 1,Modern Vampires of the City,2,0.08695652173913043,2024-10-05,19
+New York 1,Only God Was Above Us,8,0.34782608695652173,2024-10-05,19
+New York 1,Other,2,0.08695652173913043,2024-10-05,19
+New York 1,Vampire Weekend,4,0.17391304347826086,2024-10-05,19
+New York 2,Contra,4,0.16,2024-10-06,18
+New York 2,Father of the Bride,4,0.16,2024-10-06,18
+New York 2,Modern Vampires of the City,5,0.2,2024-10-06,18
+New York 2,Only God Was Above Us,7,0.28,2024-10-06,18
+New York 2,Vampire Weekend,5,0.2,2024-10-06,18
+Paris,Contra,3,0.1111111111111111,2024-12-13,2
+Paris,Father of the Bride,6,0.2222222222222222,2024-12-13,2
+Paris,Modern Vampires of the City,2,0.07407407407407407,2024-12-13,2
+Paris,Only God Was Above Us,9,0.3333333333333333,2024-12-13,2
+Paris,Other,2,0.07407407407407407,2024-12-13,2
+Paris,Vampire Weekend,5,0.18518518518518517,2024-12-13,2
+Philadelphia,Contra,1,0.043478260869565216,2024-09-28,23
+Philadelphia,Father of the Bride,4,0.17391304347826086,2024-09-28,23
+Philadelphia,Modern Vampires of the City,3,0.13043478260869565,2024-09-28,23
+Philadelphia,Only God Was Above Us,8,0.34782608695652173,2024-09-28,23
+Philadelphia,Other,2,0.08695652173913043,2024-09-28,23
+Philadelphia,Vampire Weekend,5,0.21739130434782608,2024-09-28,23
+Phoenix,Contra,3,0.125,2024-06-09,50
+Phoenix,Father of the Bride,5,0.20833333333333334,2024-06-09,50
+Phoenix,Modern Vampires of the City,3,0.125,2024-06-09,50
+Phoenix,Only God Was Above Us,8,0.3333333333333333,2024-06-09,50
+Phoenix,Other,1,0.041666666666666664,2024-06-09,50
+Phoenix,Vampire Weekend,4,0.16666666666666666,2024-06-09,50
+Raleigh,Contra,2,0.08,2024-10-09,16
+Raleigh,Father of the Bride,5,0.2,2024-10-09,16
+Raleigh,Modern Vampires of the City,2,0.08,2024-10-09,16
+Raleigh,Only God Was Above Us,9,0.36,2024-10-09,16
+Raleigh,Other,2,0.08,2024-10-09,16
+Raleigh,Vampire Weekend,5,0.2,2024-10-09,16
+Rochester Hills,Contra,3,0.13043478260869565,2024-09-23,27
+Rochester Hills,Father of the Bride,4,0.17391304347826086,2024-09-23,27
+Rochester Hills,Modern Vampires of the City,2,0.08695652173913043,2024-09-23,27
+Rochester Hills,Only God Was Above Us,9,0.391304347826087,2024-09-23,27
+Rochester Hills,Other,1,0.043478260869565216,2024-09-23,27
+Rochester Hills,Vampire Weekend,4,0.17391304347826086,2024-09-23,27
+San Diego,Contra,1,0.041666666666666664,2024-06-10,49
+San Diego,Father of the Bride,5,0.20833333333333334,2024-06-10,49
+San Diego,Modern Vampires of the City,5,0.20833333333333334,2024-06-10,49
+San Diego,Only God Was Above Us,8,0.3333333333333333,2024-06-10,49
+San Diego,Vampire Weekend,5,0.20833333333333334,2024-06-10,49
+Seattle,Contra,3,0.125,2024-06-20,43
+Seattle,Father of the Bride,5,0.20833333333333334,2024-06-20,43
+Seattle,Modern Vampires of the City,2,0.08333333333333333,2024-06-20,43
+Seattle,Only God Was Above Us,9,0.375,2024-06-20,43
+Seattle,Vampire Weekend,5,0.20833333333333334,2024-06-20,43
+St. Augustine,Contra,4,0.16,2024-10-15,13
+St. Augustine,Father of the Bride,4,0.16,2024-10-15,13
+St. Augustine,Modern Vampires of the City,3,0.12,2024-10-15,13
+St. Augustine,Only God Was Above Us,9,0.36,2024-10-15,13
+St. Augustine,Vampire Weekend,5,0.2,2024-10-15,13
+Toronto,Contra,3,0.11538461538461539,2024-09-24,26
+Toronto,Father of the Bride,5,0.19230769230769232,2024-09-24,26
+Toronto,Modern Vampires of the City,2,0.07692307692307693,2024-09-24,26
+Toronto,Only God Was Above Us,9,0.34615384615384615,2024-09-24,26
+Toronto,Other,1,0.038461538461538464,2024-09-24,26
+Toronto,Vampire Weekend,6,0.23076923076923078,2024-09-24,26
+Washington 1,Contra,3,0.11538461538461539,2024-09-30,22
+Washington 1,Father of the Bride,5,0.19230769230769232,2024-09-30,22
+Washington 1,Modern Vampires of the City,4,0.15384615384615385,2024-09-30,22
+Washington 1,Only God Was Above Us,9,0.34615384615384615,2024-09-30,22
+Washington 1,Other,1,0.038461538461538464,2024-09-30,22
+Washington 1,Vampire Weekend,4,0.15384615384615385,2024-09-30,22
+Washington 2,Contra,1,0.045454545454545456,2024-10-01,21
+Washington 2,Father of the Bride,3,0.13636363636363635,2024-10-01,21
+Washington 2,Modern Vampires of the City,3,0.13636363636363635,2024-10-01,21
+Washington 2,Only God Was Above Us,9,0.4090909090909091,2024-10-01,21
+Washington 2,Other,1,0.045454545454545456,2024-10-01,21
+Washington 2,Vampire Weekend,5,0.22727272727272727,2024-10-01,21
+Wilmington,Contra,2,0.08695652173913043,2024-10-08,17
+Wilmington,Father of the Bride,4,0.17391304347826086,2024-10-08,17
+Wilmington,Modern Vampires of the City,3,0.13043478260869565,2024-10-08,17
+Wilmington,Only God Was Above Us,8,0.34782608695652173,2024-10-08,17
+Wilmington,Other,1,0.043478260869565216,2024-10-08,17
+Wilmington,Vampire Weekend,5,0.21739130434782608,2024-10-08,17
+Wolverhampton,Contra,4,0.18181818181818182,2024-12-06,6
+Wolverhampton,Father of the Bride,4,0.18181818181818182,2024-12-06,6
+Wolverhampton,Modern Vampires of the City,2,0.09090909090909091,2024-12-06,6
+Wolverhampton,Only God Was Above Us,8,0.36363636363636365,2024-12-06,6
+Wolverhampton,Vampire Weekend,4,0.18181818181818182,2024-12-06,6
