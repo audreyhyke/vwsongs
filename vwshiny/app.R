@@ -22,6 +22,7 @@ load("data/vwd.RData")
 load("data/song_shows.RData")
 load("data/overlapmap.RData")
 load("data/deepcutsmap.RData")
+load("data/setlistsf.RData")
 
 
 simmat <- read.csv("data/similaritymatrixdc.csv",check.names=FALSE)
@@ -168,10 +169,112 @@ get_setlist <- function(show,song_show_wide) {
   
 }
 
+get_dag <- function(shows,setlists){
+  
+  setlists_1 <- setlists[which(shows %in% names(setlists))]
+  
+  song_positions <- do.call(rbind, lapply(setlists_1, function(setlist) {
+    data.frame(Song = setlist, Position = seq_along(setlist))
+  }))
+  
+  avg_positions <- aggregate(Position ~ Song, data = song_positions, mean)
+  rownames(avg_positions) <- avg_positions$Song 
+  
+  
+  edges <- unlist(lapply(setlists_1, function(setlist) {
+    if (length(setlist) > 1) {
+      transitions <- cbind(setlist[-length(setlist)], setlist[-1])
+      return(as.vector(t(transitions))) 
+    }
+  }), use.names = FALSE)
+  
+  
+  edges_with_shows <- do.call(rbind, lapply(names(setlists_1), function(show) {
+    setlist <- setlists[[show]]
+    if (length(setlist) > 1) {
+      transitions <- data.frame(
+        From = setlist[-length(setlist)],
+        To = setlist[-1],
+        Show = show
+      )
+      return(transitions)
+    }
+  }))
+  
+  starting_songs <- unique(sapply(setlists_1, function(setlist) setlist[1]))
+  
+  graph <- graph_from_data_frame(edges_with_shows, directed = TRUE)
+  
+  vertex_font_weight <- ifelse(V(graph)$name %in% starting_songs, 2, 1)
+  
+  layout <- layout_as_tree(graph) 
+  y_positions <- -avg_positions[V(graph)$name, "Position"]
+  
+  layout <- cbind(layout[, 1], y_positions)
+  
+  show_colors <- setNames(sample(rainbow(length(setlists_1))), names(setlists_1)) 
+  
+  
+  edge_colors <- show_colors[edges_with_shows$Show]
+  
+  plot(
+    graph,
+    layout = layout,
+    vertex.label.font = vertex_font_weight,
+    vertex.label.color = "black",
+    edge.arrow.size = 0.2,
+    edge.color = edge_colors,
+    vertex.shape = "none",
+    vertex.label.cex=.8,
+    edge.curved=.2,
+    main = "Setlist Directed Graph",
+    asp = 1.5
+  )
+  
+  
+}
+
 # Define UI for application that draws a histogram
 ui <- fluidPage(
   
   navset_tab(
+    
+#####
+
+nav_panel("Home",
+          
+          titlePanel("VW OGWAU Tour Statistics"),
+          
+          h5("I was super bored and missing the OGWAU tour so here are some statistics on it. I do not claim to be smart or knowledgeable in statistics even though I got a degree in it.")
+          
+          
+          
+          ),
+
+#####
+nav_panel("Setlists",
+          
+          titlePanel("Setlists"),
+          
+          sidebarLayout(
+            
+            sidebarPanel(
+              
+              h5("Choose which shows you went to and you will be shown the setlists."),
+              checkboxGroupInput("setshows", "Shows:", list_shows,selected = "Amsterdam")
+            ),
+            mainPanel(
+              
+              tableOutput("settable")
+              
+            )
+            
+            
+          )
+),
+
+
+
     
 #####
     nav_panel("Clusters",
@@ -189,7 +292,7 @@ ui <- fluidPage(
             sliderInput("k",
                         "Number of clusters:",
                         min = 2,
-                        max = 7,
+                        max = 10,
                         value = 2),
             selectInput("ksong", "Choose a song to see the cluster",
                         choices = colnames(simmat))
@@ -312,29 +415,6 @@ nav_panel("Dendrogram",
           
           ),
 
-#####
-nav_panel("Setlists",
-          
-          titlePanel("Setlists"),
-          
-          sidebarLayout(
-            
-            sidebarPanel(
-              
-              h5("Choose which shows you went to and you will be shown the setlists."),
-              checkboxGroupInput("setshows", "Shows:", list_shows,selected = "Amsterdam")
-            ),
-            mainPanel(
-              
-              tableOutput("settable")
-              
-            )
-              
-              
-            )
-          ),
-          
-          
 
 #####
 nav_panel("Overlap",
@@ -357,7 +437,26 @@ nav_panel("Deep Cuts",
           
           leafletOutput("dleaf")
           
-)
+),
+
+#####
+nav_panel("Order of Songs",
+          
+          titlePanel("Directed Graph of Setlists"),
+          sidebarLayout(
+            
+            sidebarPanel(
+              h5("Check which shows you went to, and the graph will update to show you what order you saw each song at. Bold songs were played first. The arrows are sometimes flipped, I don't know why. Again I took away the festivals because their setlists were different and it would make it even HARDER to read."),
+              checkboxGroupInput("dagshows", "Shows:", sort(names(setlists_f)),selected = "Amsterdam")
+            ),
+            mainPanel(
+              
+              plotOutput("dagplot")
+              
+            )
+          )
+          
+),
 
 
 #####
@@ -453,6 +552,13 @@ server <- function(input, output) {
                          labelOptions = labelOptions( style = list("font-weight" = "normal", padding = "3px 8px"), textsize = "13px", direction = "auto")
         )
     })
+    
+    output$dagplot <- renderPlot({
+      
+      get_dag(input$dagshows,setlists_f)
+      },
+      height = 1000
+    )
       
     }
 

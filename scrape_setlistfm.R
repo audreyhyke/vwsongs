@@ -716,7 +716,7 @@ dendr <- reorder(dend,-svd(t(songpos1))$v[,1])
 
 write_csv(songpos,"songpos.csv")
 
-songpos1 <- read_csv("songpos.csv")
+songpos1 <- read_csv("data/songpos.csv")
 
 
 graphsp <- songpos3[-c(44,1),]
@@ -748,8 +748,8 @@ sdsonpos <- rowSds(gsp,na.rm=T)
 
 # over 5: cousins, oc, unb, campus.
 
-gsp <- gsp[-c(1,2,7),]
-avgsonpos <- avgsonpos[-c(1,2,7),]
+# gsp <- gsp[-c(1,2,7),]
+# avgsonpos <- avgsonpos[-c(1,2,7),]
 
 
 avgsonpos <- sort(avgsonpos)
