@@ -1,0 +1,12 @@
+name: ogwautour
+title: ogwautour
+username: audreyhyke
+account: audreyhyke
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 13697319
+bundleId: 9633644
+url: https://audreyhyke.shinyapps.io/ogwautour/
+version: 1
+asMultiple: FALSE
+asStatic: FALSE

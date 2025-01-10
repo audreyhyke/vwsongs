@@ -11,6 +11,7 @@ library(plotly)
 library(tidyverse)
 library(dplyr)
 library(pheatmap)
+library(igraph)
 
 load("data/ClusteringAuto.RData")
 load("data/nextsongs.RData")
