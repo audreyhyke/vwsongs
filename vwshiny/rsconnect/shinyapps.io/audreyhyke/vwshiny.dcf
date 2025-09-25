@@ -5,6 +5,8 @@ account: audreyhyke
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 13686303
-bundleId: 9624578
+bundleId: 9633653
 url: https://audreyhyke.shinyapps.io/vwshiny/
 version: 1
+asMultiple: FALSE
+asStatic: FALSE

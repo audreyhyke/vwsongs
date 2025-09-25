@@ -79,7 +79,7 @@ get_songs <- function(link) {
       html_text()
 
    
-   if(tour = "Only God Was Above Us"){
+   if(tour == "Only God Was Above Us"){
    print(paste("Getting", venue, year, "set lists..."))
 
    set_list <- list(sets = sets, artist = artist, venue = venue, month = month, day = day, year = year, tour = tour)
@@ -507,8 +507,8 @@ print(vwd %>%
   
   
   
-  %>%
-  write_csv(file = "singleshowvw.csv")
+  # %>%
+  # write_csv(file = "singleshowvw.csv")
 
 library(ggstream)
 
