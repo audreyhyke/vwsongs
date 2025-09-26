@@ -14,6 +14,7 @@ library(pheatmap)
 library(igraph)
 library(gt)
 library(scales)
+library(DT)
 
 load("data/ClusteringAuto.RData")
 load("data/nextsongs.RData")
@@ -31,6 +32,14 @@ albums <- read.csv("data/songalbums.csv")[,-1]
 names(albums) <- c("song","album")
 
 
+song_col <- left_join(albums,albumcolors,by = "album")[,c(1,3)]
+
+l_albumcolors <- as.data.frame(cbind(albumcolors$album,c("#d8d2e7","#f8e6d0","#d2e1f1","#dce9d5","#efefef","#edcdcd")))
+
+names(l_albumcolors) <- c("album","col")
+
+l_song_col <- left_join(albums,l_albumcolors, by = "album")[,c(1,3)]
+
 simmat <- read.csv("data/similaritymatrixdc.csv",check.names=FALSE)
 rownames(simmat) <- colnames(simmat)
 list_shows <- sort(unique(vwc$choice_name))
@@ -44,8 +53,12 @@ list_clusters <- function(simmat,song,clust,clustassign){
   l <- names(clustassign[[clust]][which(clustassign[[clust]] == clustassign[[clust]][which(names(clustassign[[clust]]) == song)])])
   
   l <- l[-which(l==song)]
+  nrow = 6
+  ncol <- ceiling(length(l) / nrow)
+  pad  <- nrow * ncol - length(l)
+  l <- as.data.table(matrix(c(l, rep("", pad)), nrow = nrow, byrow = TRUE))
   
-  l <- as.data.table(matrix(l, nrow = 4, byrow = TRUE))
+  #l <- as.data.table(matrix(l, nrow = 6, byrow = TRUE))
   
 
   
@@ -163,16 +176,30 @@ all_percent_given <- function(given,song){
   return(cbind(rownames(given),t(round(given[which(colnames(given) == song),],2))))
 }
 
-get_setlist <- function(show,song_show_wide) {
-  
-  song_show_wide %>%
-    select(
-      all_of(show)
-    ) %>%
-    return() 
-  
-  #return(unname(unlist(song_show_wide[show])))
-  
+# get_setlist <- function(choice,song_show_wide) {
+#   
+#   song_show_wide %>%
+#     select(
+#       all_of(choice)
+#     )%>%
+#     as.data.frame() %>%
+#     return()
+#   
+#   #return(unname(unlist(song_show_wide[show])))
+#   
+# }
+
+get_setlist <- function(choice, song_show_wide) {
+  choice <- intersect(choice, names(song_show_wide))
+  if (length(choice) == 0) return(data.frame())
+  maxlen <- max(sapply(choice, function(nm) length(song_show_wide[[nm]][[1]])))
+  cols <- lapply(choice, function(nm) {
+    x <- song_show_wide[[nm]][[1]]
+    length(x) <- maxlen         # pad with NA to equal length
+    x
+  })
+  df <- as.data.frame(setNames(cols, choice), check.names = FALSE)
+  return(df)
 }
 
 get_song_totalsVW <- function(shows,vwc,albums) {
@@ -438,26 +465,25 @@ nav_panel("Home",
           ),
 
 #####
-# nav_panel("Setlists",
-#           
-#           titlePanel("Setlists"),
-#           
-#           sidebarLayout(
-#             
-#             sidebarPanel(
-#               
-#               h5("Choose which shows you went to and you will be shown the setlists."),
-#               checkboxGroupInput("setshows", "Shows:", list_shows,selected = "Amsterdam: 2024-12-15")
-#             ),
-#             mainPanel(
-#               
-#               tableOutput("settable")
-#               
-#             )
-#             
-#             
-#           )
-# ),
+nav_panel("Setlists",
+
+          titlePanel("Setlists"),
+
+          sidebarLayout(
+
+            sidebarPanel(
+
+              h5("Choose which shows you went to and you will be shown the setlists."),
+              checkboxGroupInput("showssetlist", "Shows:", list_shows,selected = "Amsterdam: 2024-12-15")
+            ),
+            mainPanel(
+              DTOutput("settable")
+
+            )
+
+
+          )
+),
 
 nav_panel("Song Totals",
           
@@ -747,9 +773,31 @@ server <- function(input, output) {
       , deleteFile = FALSE
     )
     
-    output$settable <- renderTable(
+    # output$settable <- renderTable(
+    #   
+    #   {get_setlist(input$setshows,song_show_wide)}
+    # )
+    
+    # output$settable <- renderTable({
+    #   req(input$setshows)
+    #   get_setlist(input$setshows, song_show_wide)
+    # }, na = "", striped = TRUE, bordered = TRUE, spacing = "xs")
+    
+    output$settable <- DT::renderDT({
+      req(input$showssetlist)
       
-      {get_setlist(input$setshows,song_show_wide)}
+      df <- get_setlist(input$showssetlist, song_show_wide)
+      
+      present_songs <- sort(unique(na.omit(unlist(df, use.names = FALSE))))
+      
+      song_col_present <- l_song_col[song_col$song %in% present_songs,]
+
+      dt <- datatable(df, options = list(dom = 't', paging = FALSE), rownames = FALSE) %>%
+        formatStyle(
+          input$showssetlist,
+          backgroundColor = styleEqual(song_col_present$song, song_col_present$col)
+        )
+      dt}
     )
     
     output$albumtableVW <- render_gt(

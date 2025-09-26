@@ -1043,7 +1043,7 @@ songposdc <- vwdcc %>%
   ) %>% 
   t()
 
-showsongdc <- as.data.frame(unique(cbind(vwdcc$city.y,vwdcc$sets)))
+showsongdc <- as.data.frame(unique(cbind(vwc$city_num,vwc$sets)))
 showsongdc[,1] <- as.numeric(factor(showsongdc[,1]))
 
 colnames(showsongdc) <- c("city_id","song")
@@ -1094,7 +1094,7 @@ plot(1:15, wss, type="b", xlab="Number of Clusters",
 kmeans_result <- kmeans(similarity_matrix, centers = 6)  # Change '3' to desired number of clusters
 cluster_assignments <- kmeans_result$cluster
 
-#write_csv(as.data.frame(similarity_matrix),"similaritymatrixdc.csv")
+write_csv(as.data.frame(similarity_matrix),"vwshiny/data/similaritymatrixdc.csv")
 
 
 
@@ -1123,11 +1123,11 @@ list_clusters <- function(simmat,song,clust,clustassign){
   return(names(clustassign[[clust]][which(clustassign[[clust]] == clustassign[[clust]][which(names(clustassign[[clust]]) == song)])]))
 }
 
-plot_clusters(kmeans_result,similarity_matrix,6)
+plot_clusters(kmeans_result,similarity_matrix,7)
 
 list_clusters(similarity_matrix,"Campus",6,clustassign)
 
-save(kmeans_results,clustassign, file = "ClusteringAuto.RData")
+save(kmeans_results,clustassign, file = "vwshiny/data/ClusteringAuto.RData")
 
 
 library(mclust)
@@ -1185,17 +1185,20 @@ song_show <- as.data.frame(song_show)
 
 colnames(song_show) <- c("sets","city.y","song_num")
 
-song_show_wide <- song_show %>%
+song_show <- as.data.frame(cbind(vwc$sets,vwc$choice_name))
+colnames(song_show) <- c("sets","choice_name")
+
+song_show_num <- as.data.frame(cbind(vwc$sets,vwc$choice_name,vwc$song_num))
+colnames(song_show_num) <- c("sets","choice_name","song_num")
+
+song_show_num_wide <- song_show_num %>%
   pivot_wider(
-    names_from = city.y,
+    names_from = choice_name,
     values_from = sets
   ) 
 
-save(song_show_wide,file = "data/song_shows.RData")
+#save(song_show_wide,file = "vwshiny/data/song_shows.RData")
 
-song_show_wide <- song_show_wide[,-1]
-
-song_show_NA <- as.data.frame(song_show_wide)
 
 max_songs <- 41
 
@@ -1223,22 +1226,26 @@ max_songs <- 41
 # 
 # song_show_list <- unlist(song_show_NA)
 
+ssw <- song_show_wide
+for(i in 1:length(song_show_wide)){
+  ssw[[i]][[1]]<- c(song_show_wide[[i]][[1]],"nothing, because it was the end of the show")
+}
 
-song_show_N <- rbind(song_show_wide,rep("nothing, because it was the end of the show"))
+ssN <- unname(unlist(ssw))
 
-song_show_N <- unname(unlist(song_show_N))
+#song_show_N <- rbind(song_show_wide,rep("nothing, because it was the end of the show"))
 
-names_songs <- unique(vwd$sets)
+names_songs <- unique(vwc$sets)
 
-song_next <- list(c(song_show_N[which(song_show_N == names_songs[1])+1]))
+song_next <- list(c(ssN[which(ssN == names_songs[1])+1]))
 
 for(i in 2:(length(names_songs))){
-  song_next <- append(song_next,list(c(song_show_N[which(song_show_N == names_songs[i])+1])))
+  song_next <- append(song_next,list(c(ssN[which(ssN == names_songs[i])+1])))
 }
 
 names(song_next) <- names_songs
 
-save(song_next,file = "data/nextsongs.RData")
+save(song_next,file = "vwshiny/data/nextsongs.RData")
 
 x <- list("x")
 
@@ -1271,7 +1278,7 @@ for(i in 2:length(song_next)){
 }
 
 
-save(song_next,song_next_per,file = "data/nextsongs.RData")
+save(song_next,song_next_per,file = "vwshiny/data/nextsongs.RData")
 
 
 setlist_albums_songs <- vwd %>%
