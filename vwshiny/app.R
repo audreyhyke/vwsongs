@@ -12,6 +12,8 @@ library(tidyverse)
 library(dplyr)
 library(pheatmap)
 library(igraph)
+library(gt)
+library(scales)
 
 load("data/ClusteringAuto.RData")
 load("data/nextsongs.RData")
