@@ -436,26 +436,26 @@ nav_panel("Home",
           ),
 
 #####
-nav_panel("Setlists",
-          
-          titlePanel("Setlists"),
-          
-          sidebarLayout(
-            
-            sidebarPanel(
-              
-              h5("Choose which shows you went to and you will be shown the setlists."),
-              checkboxGroupInput("setshows", "Shows:", list_shows,selected = "Amsterdam: 2024-12-15")
-            ),
-            mainPanel(
-              
-              tableOutput("settable")
-              
-            )
-            
-            
-          )
-),
+# nav_panel("Setlists",
+#           
+#           titlePanel("Setlists"),
+#           
+#           sidebarLayout(
+#             
+#             sidebarPanel(
+#               
+#               h5("Choose which shows you went to and you will be shown the setlists."),
+#               checkboxGroupInput("setshows", "Shows:", list_shows,selected = "Amsterdam: 2024-12-15")
+#             ),
+#             mainPanel(
+#               
+#               tableOutput("settable")
+#               
+#             )
+#             
+#             
+#           )
+# ),
 
 nav_panel("Song Totals",
           
@@ -567,23 +567,23 @@ nav_panel("Song Totals",
   
   
 #####
-nav_panel("Album Percentages",
-          
-          titlePanel("What Album Percent Breakdown Did You See?"),
-          sidebarLayout(
-            
-            sidebarPanel(
-              h5("Check which shows you went to, and the pie chart will update to show you how many songs from each album they played, and the overall percentage."),
-            checkboxGroupInput("cbperc", "Shows:", list_shows,selected = "Amsterdam")
-            ),
-            mainPanel(
-              
-              plotlyOutput("percplot")
-              
-            )
-          )
-          
-          ),
+# nav_panel("Album Percentages",
+#           
+#           titlePanel("What Album Percent Breakdown Did You See?"),
+#           sidebarLayout(
+#             
+#             sidebarPanel(
+#               h5("Check which shows you went to, and the pie chart will update to show you how many songs from each album they played, and the overall percentage."),
+#             checkboxGroupInput("cbperc", "Shows:", list_shows,selected = "Amsterdam")
+#             ),
+#             mainPanel(
+#               
+#               plotlyOutput("percplot")
+#               
+#             )
+#           )
+#           
+#           ),
 
 #####
 nav_panel("Two Songs",

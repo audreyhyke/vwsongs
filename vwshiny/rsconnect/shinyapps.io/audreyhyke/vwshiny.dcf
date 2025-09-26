@@ -1,11 +1,11 @@
 name: vwshiny
-title:
+title: vwshiny
 username: audreyhyke
 account: audreyhyke
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 13686303
-bundleId: 9633653
+bundleId: 10956028
 url: https://audreyhyke.shinyapps.io/vwshiny/
 version: 1
 asMultiple: FALSE
