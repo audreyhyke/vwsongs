@@ -24,11 +24,14 @@ load("data/song_shows.RData")
 load("data/overlapmap.RData")
 load("data/deepcutsmap.RData")
 load("data/setlistsf.RData")
+load("data/vwc_pt2.RData")
+albums <- read.csv("data/songalbums.csv")[,-1]
+names(albums) <- c("song","album")
 
 
 simmat <- read.csv("data/similaritymatrixdc.csv",check.names=FALSE)
 rownames(simmat) <- colnames(simmat)
-list_shows <- sort(unique(setlist_albums_songs$city.y))
+list_shows <- sort(unique(vwc$choice_name))
 colnames(given) <- unique(vwd$sets)
 rownames(given) <- colnames(given)
 given <- given[,order(colnames(given))]
@@ -170,6 +173,186 @@ get_setlist <- function(show,song_show_wide) {
   
 }
 
+get_song_totalsVW <- function(shows,vwc,albums) {
+  show_songs <- vwc[c("sets","album")][vwc$choice_name %in% shows,]
+  
+  names(show_songs) <- c("song","album")
+  
+  freq <- show_songs %>%
+    group_by(song)%>%
+    summarize(
+      freq_song = n()
+    ) 
+  
+  total_songs <- albums %>%
+    left_join(freq,by = "song") %>%
+    mutate(
+      freq_song = ifelse(is.na(freq_song),0,freq_song))
+  
+  piv_total <- pivot_wider(
+    total_songs, names_from = album,
+    values_from = freq_song
+  )
+  
+  VW <- na.omit(piv_total[c("song","Vampire Weekend")])
+  VW_gt <- VW %>% gt() %>%
+    data_color(
+      columns = 'Vampire Weekend',
+      target_columns = everything(),
+      colors = col_numeric(c("white", "orange"), domain = c(0,length(shows)))
+    )%>%
+    tab_options(
+      table.font.size = 12
+    )
+  
+  return(VW_gt)
+}
+
+get_song_totalsC <- function(shows,vwc,albums) {
+  show_songs <- vwc[c("sets","album")][vwc$choice_name %in% shows,]
+  
+  names(show_songs) <- c("song","album")
+  
+  freq <- show_songs %>%
+    group_by(song)%>%
+    summarize(
+      freq_song = n()
+    ) 
+  
+  total_songs <- albums %>%
+    left_join(freq,by = "song") %>%
+    mutate(
+      freq_song = ifelse(is.na(freq_song),0,freq_song))
+  
+  piv_total <- pivot_wider(
+    total_songs, names_from = album,
+    values_from = freq_song
+  )
+  
+ 
+  C <- na.omit(piv_total[c("song","Contra")])
+  
+  
+  C_gt <- C %>% gt() %>%
+    data_color(
+      columns = 'Contra',
+      target_columns = everything(),
+      colors = col_numeric(c("white", "orange"), domain = c(0,length(shows)))
+    )%>%
+    tab_options(
+      table.font.size = 12
+    )
+  
+  return(C_gt)}
+
+get_song_totalsM <- function(shows,vwc,albums) {
+  show_songs <- vwc[c("sets","album")][vwc$choice_name %in% shows,]
+  
+  names(show_songs) <- c("song","album")
+  
+  freq <- show_songs %>%
+    group_by(song)%>%
+    summarize(
+      freq_song = n()
+    ) 
+  
+  total_songs <- albums %>%
+    left_join(freq,by = "song") %>%
+    mutate(
+      freq_song = ifelse(is.na(freq_song),0,freq_song))
+  
+  piv_total <- pivot_wider(
+    total_songs, names_from = album,
+    values_from = freq_song
+  )
+  MVOTC <- na.omit(piv_total[c("song","Modern Vampires of the City")])
+
+  
+  MVOTC_gt <- MVOTC %>% gt() %>%
+    data_color(
+      columns = 'Modern Vampires of the City',
+      target_columns = everything(),
+      colors = col_numeric(c("white", "orange"), domain = c(0,length(shows)))
+    )%>%
+    tab_options(
+      table.font.size = 12
+    )
+  
+  
+  return(MVOTC_gt)}
+
+get_song_totalsF <- function(shows,vwc,albums) {
+  show_songs <- vwc[c("sets","album")][vwc$choice_name %in% shows,]
+  
+  names(show_songs) <- c("song","album")
+  
+  freq <- show_songs %>%
+    group_by(song)%>%
+    summarize(
+      freq_song = n()
+    ) 
+  
+  total_songs <- albums %>%
+    left_join(freq,by = "song") %>%
+    mutate(
+      freq_song = ifelse(is.na(freq_song),0,freq_song))
+  
+  piv_total <- pivot_wider(
+    total_songs, names_from = album,
+    values_from = freq_song
+  )
+  
+  FOTB <- na.omit(piv_total[c("song","Father of the Bride")])
+
+  
+
+  FOTB_gt <- FOTB %>% gt() %>%
+    data_color(
+      columns = 'Father of the Bride',
+      target_columns = everything(),
+      colors = col_numeric(c("white", "orange"), domain = c(0,length(shows)))
+    )%>%
+    tab_options(
+      table.font.size = 12
+    )
+  return(FOTB_gt)}
+
+get_song_totalsO <- function(shows,vwc,albums) {
+  show_songs <- vwc[c("sets","album")][vwc$choice_name %in% shows,]
+  
+  names(show_songs) <- c("song","album")
+  
+  freq <- show_songs %>%
+    group_by(song)%>%
+    summarize(
+      freq_song = n()
+    ) 
+  
+  total_songs <- albums %>%
+    left_join(freq,by = "song") %>%
+    mutate(
+      freq_song = ifelse(is.na(freq_song),0,freq_song))
+  
+  piv_total <- pivot_wider(
+    total_songs, names_from = album,
+    values_from = freq_song
+  )
+
+  OGWAU <- na.omit(piv_total[c("song","Only God Was Above Us")])
+  
+  OGWAU_gt <- OGWAU %>% gt() %>%
+    data_color(
+      columns = 'Only God Was Above Us',
+      target_columns = everything(),
+      colors = col_numeric(c("white", "orange"), domain = c(0,length(shows)))
+    )%>%
+    tab_options(
+      table.font.size = 12
+    )
+  
+  return(OGWAU_gt)}
+
+
 get_dag <- function(shows,setlists){
   
   setlists_1 <- setlists[which(shows %in% names(setlists))]
@@ -262,11 +445,49 @@ nav_panel("Setlists",
             sidebarPanel(
               
               h5("Choose which shows you went to and you will be shown the setlists."),
-              checkboxGroupInput("setshows", "Shows:", list_shows,selected = "Amsterdam")
+              checkboxGroupInput("setshows", "Shows:", list_shows,selected = "Amsterdam: 2024-12-15")
             ),
             mainPanel(
               
               tableOutput("settable")
+              
+            )
+            
+            
+          )
+),
+
+nav_panel("Song Totals",
+          
+          titlePanel("Song Totals"),
+          
+          sidebarLayout(
+            
+            sidebarPanel(
+              
+              h5("Choose which shows you went to and you will be shown what songs you've seen."),
+              checkboxGroupInput("setshows", "Shows:", list_shows,selected = "Amsterdam: 2024-12-15"),
+              width = 2
+            ),
+            mainPanel(
+              fluidRow( # First row for the first table
+                column(2, # Occupy 6 out of 12 columns (half width)
+                       gt_output("albumtableVW")
+                ),
+                column(2, # Occupy the remaining 6 columns
+                       gt_output("albumtableC")
+                )
+                ,
+                column(2, # Occupy the remaining 6 columns
+                       gt_output("albumtableM")
+                       )
+                ,
+                  column(2,
+                         gt_output("albumtableF")
+                         ),
+                  column(2,
+                         gt_output("albumtableO"))
+                )
               
             )
             
@@ -527,6 +748,26 @@ server <- function(input, output) {
     output$settable <- renderTable(
       
       {get_setlist(input$setshows,song_show_wide)}
+    )
+    
+    output$albumtableVW <- render_gt(
+      {get_song_totalsVW(input$setshows,vwc,albums)}
+    )
+    
+    output$albumtableC <- render_gt(
+      {get_song_totalsC(input$setshows,vwc,albums)}
+    )
+    
+    output$albumtableM <- render_gt(
+      {get_song_totalsM(input$setshows,vwc,albums)}
+    )
+    
+    output$albumtableF <- render_gt(
+      {get_song_totalsF(input$setshows,vwc,albums)}
+    )
+    
+    output$albumtableO <- render_gt(
+      {get_song_totalsO(input$setshows,vwc,albums)}
     )
     
     output$oleaf <- renderLeaflet({

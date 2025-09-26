@@ -26,7 +26,7 @@ url_expander <- function(link, num) {
    artist_query <- param_get(urls = link,
                              parameter_names = "query")
 
-   build_url <- paste0("https://www.setlist.fm/search?page=", num, "&query=", artist_query)
+   build_url <- paste0("https://www.setlist.fm/setlists/vampire-weekend-33d6bc79.html?page=",num)
 }
 
 # .hidden-print li:nth-child(9) a
@@ -39,11 +39,13 @@ get_links <- function (link) {
    links <- session %>%
       html_nodes(".setlistPreview h2 a") %>%
       html_attr("href") %>%
-      as.tibble()
+      as_tibble()
 
    links <- links %>%
       mutate(link = paste0("https://www.setlist.fm/", value)) %>%
       select(-value)
+   
+
 }
 
 get_songs <- function(link) {
@@ -77,19 +79,33 @@ get_songs <- function(link) {
    day <- session %>%
       html_node(".day") %>%
       html_text()
+   
+  festival <- session %>%
+    html_node(".festivalHeadline") %>%
+    html_text()
+  
+  festival_name <- session %>%
+    html_node(".festivalBg p a span") %>%
+    html_text()
+  
+  festival_name <- sub(" setlists","",festival_name)
 
    
-   if(tour == "Only God Was Above Us"){
+   if(!is.na(tour) && tour == "Only God Was Above Us"){
    print(paste("Getting", venue, year, "set lists..."))
+   fest <- "VW Show"
+   if(!is.na(festival)){
+     fest <- festival_name
+   }
 
-   set_list <- list(sets = sets, artist = artist, venue = venue, month = month, day = day, year = year, tour = tour)
+   set_list <- list(sets = sets, artist = artist, venue = venue, month = month, day = day, year = year, tour = tour, festival = fest)
    }
 }
 
 scrape_artist <- function (artist_name, link) {
 
    # first get the number of pages we'll need to crawl from setlist.fm
-   num <- 7
+   num <- 10
    # make a sequence to pass to map2 to build the URLs to scrape
    nums <- seq(1, num, 1)
    # repeat the base URL num number of times because map2 expectes vectors of equal length
@@ -112,7 +128,7 @@ scrape_artist <- function (artist_name, link) {
       group_by(artist, venue, month, day, year) %>%
       mutate(song_num = row_number())
    ### write the scrape to disk
-   write_csv(set_lists_final, paste0(artist_name, "_set_lists.csv"))
+   write_csv(set_lists_final, paste0(artist_name, "_set_lists_pt2.csv"))
 }
 
 
@@ -121,33 +137,36 @@ scrape_artist <- function (artist_name, link) {
 scrape_artist("vw", "https://www.setlist.fm/search?query=vampire+weekend")
 
 
-vw <- read.csv(file = "vw_set_listsCC.csv")
+vw <- read.csv(file = "vw_set_lists_pt2.csv")
 
-vw[1528,1] <- "Sympathy"
+# one has "Sympathy / New Dorp. New York" as song
+vw[which("SNL Closing Theme (A Waltz in A) / Flower Moon" == vw$sets),1] <- "Flower Moon"
+
+vw[which("Married in a Gold Rush / All the Gold in California / Sin City / Cumberland Blues / Possum" == vw$sets),1] <- "Cocaine Cowboys"
+
+SNDNY <- which("Sympathy / New Dorp. New York" == vw$sets)
+
+vw[SNDNY,1] <- "Sympathy"
 
 ndny <- c("New Dorp. New York")
 
 names(ndny) <- "sets"
 
-vw<- rbind(vw,unlist(c(ndny,vw[1528,-1])))
+vw<- rbind(vw,unlist(c(ndny,vw[SNDNY,-1])))
 
-vw <- vw %>%
-  filter(tour == "Only God Was Above Us")
+vw$sets <- ifelse(sapply(vw$sets, function(x) "Flower Moon" %in% x),"Flower Moon", vw$sets)
 
-vw[3,1] <- "One (Blake's Got a New Face)"
+albums <- read.csv("vwshiny/data/songalbums.csv",header = T)
 
-
-albums <- read.csv("~/Downloads/vwalbums - Sheet1-5.csv",header = F)
-
-names(albums) <- c("sets", "album")
+names(albums) <- c("num","sets", "album")
 
 
 ### cocaine cowboys???
 
-vw <- vw %>%
+vw_vwsongs <- vw %>%
   left_join(albums, by = "sets")
 
-vwna <- na.omit(vw)
+vwna <- na.omit(vw_vwsongs)
 
 city <- NA
 
@@ -158,13 +177,55 @@ for(st in vwna[,3]){
 city <- city[-1]
 
 vwna <- cbind(vwna,city)
-write_csv(vwna,"vw_setlist_na_city.csv")
+write_csv(vwna,"data/vw_setlist_na_city_pt2.csv")
 
 
-vwc <- read_csv("data/vw_setlist_na_city.csv")
+vwc <- read_csv("data/vw_setlist_na_city_pt2.csv")
+
+vwc$date <- as.Date(paste0(vwc$year,"-",vwc$month,"-",vwc$day), format = "%Y-%b-%d")
 
 
-write_csv(vwna, file = "data/vw_setlist_na.csv")
+vwc$city_day <- paste0(vwc$city, " ", vwc$day)
+
+date_num <- as.data.frame(cbind(sort(unique(vwc$date)),seq(1,length(unique(vwc$date)),1)))
+
+names(date_num) <- c("date","num")
+
+date_num$date <- as.Date(date_num$date)
+
+date_num <- date_num %>%
+  left_join(unique(vwc[,c(12,13)]),by = "date")
+
+date_city <- date_num
+
+for(i in 1:nrow(date_num)){
+  
+  ls_cities <- NA
+  
+  if(date_num$city[i] %in% date_num$city[(i+1):(nrow(date_num)-1)] && !(date_num$city[i] %in% ls_cities)){
+    ord_shows <- which(date_num$city == date_num$city[i])
+    num_shows <- 1:length(ord_shows)
+    date_city$city[ord_shows] <- paste0(date_num$city[i]," ",num_shows)
+    ls_cities <- append(ls_cities,date_num$city[i])
+  }
+  
+}
+
+names(date_city) <- c("date","num_show","city_num")
+
+vwc <- vwc %>%
+  left_join(date_city,by="date")
+
+vwc$choice_name <- ifelse(vwc$festival == "VW Show", paste0(vwc$city_num,": ",vwc$date),paste0(vwc$festival,": ",vwc$date))
+
+
+
+# ----------------------------
+
+save(vwc, file = "vwshiny/data/vwc_pt2.RData")
+
+
+write_csv(vwc, file = "data/vw_setlist_pt2_citynum.csv")
 
 songs <- vwd[,1]
 
