@@ -31,6 +31,16 @@ load("data/vwc_pt2.RData")
 albums <- read.csv("data/songalbums.csv")[,-1]
 names(albums) <- c("song","album")
 
+ccol <- "#583951"
+vwcol <- "#F09F49"
+ogcol <- "#546C98"
+fcol <- "#479A53"
+mcol <- "#828282"
+otcol <- "#E96586"
+
+
+album_col <- c("Vampire Weekend" = vwcol, "Contra" = ccol, "Only God Was Above Us" = ogcol, "Father of the Bride" = fcol, "Modern Vampires of the City" = mcol, "Other" = otcol)
+
 
 song_col <- left_join(albums,albumcolors,by = "album")[,c(1,3)]
 
@@ -75,18 +85,33 @@ get_next_desc <- function(song,song_next_per){
   return(song_next_per[[song]])
 }
 
-get_streamgraph <- function(album_percentages){
-  ggplot(album_percentages, aes(x = num, y = percentage, fill = album)) +
+get_streamgraph <- function(album_percentages_nf){
+  ggplot(album_percentages_nf, aes(x = date_num, y = percentage, fill = album)) +
     geom_stream( bw =0.6,color = 1, lwd = 0.3)+
-    scale_fill_manual(values = c(unique(album_percentages$col)[1:4],unique(album_percentages$col)[6],unique(album_percentages$col)[5])) +
+    scale_fill_manual(values = album_col) +
     theme_void()
 }
 
+get_linegraph <- function(album_percentages_nf){
+  ggplot(album_percentages_nf, aes(x = date_num, y = percentage, group = album, col = album)) +
+    geom_line(alpha = 0.25) +
+    scale_color_manual(values = album_col)+
+    geom_smooth(method = "loess",se=FALSE) +
+    theme_minimal() +
+    theme(
+      axis.title.x = element_blank(),
+      axis.text.x  = element_blank(),
+      axis.ticks.x = element_blank(),
+      panel.grid.major.x = element_blank(),
+      panel.grid.minor.x = element_blank()
+    )
+}
+
 get_piechart <- function(shows,setlist_albums_songs){
-  
+  if(length(shows)>0){
   city_songs <- setlist_albums_songs %>%
     filter(
-      city.y %in% shows
+      choice_name %in% shows
     ) %>%
     select(
       album, sets, col
@@ -154,7 +179,7 @@ get_piechart <- function(shows,setlist_albums_songs){
       colorway = ~col)
   
   fig1
-  
+  }
   
 }
 
@@ -162,10 +187,11 @@ get_heatmap <- function(given){
   colnames(given) <- str_trunc(colnames(given),12)
   
   rownames(given) <- str_trunc(rownames(given),12)
-  pheatmap(given,
+  hm <- pheatmap(given,
            color = colorRampPalette(c("white", "blue", "darkblue"))(50), # Gradient colors
            display_numbers = TRUE, # Show similarity values
-           number_color = "black") # Number color
+           number_color = "black") 
+  return(hm)# Number color
 }
 
 percent_given <- function(given,song1,song2){
@@ -228,7 +254,7 @@ get_song_totalsVW <- function(shows,vwc,albums) {
     data_color(
       columns = 'Vampire Weekend',
       target_columns = everything(),
-      colors = col_numeric(c("white", "orange"), domain = c(0,length(shows)))
+      colors = col_numeric(c("white", "orange"), domain = c(0,length(shows)+1))
     )%>%
     tab_options(
       table.font.size = 12
@@ -382,68 +408,139 @@ get_song_totalsO <- function(shows,vwc,albums) {
   return(OGWAU_gt)}
 
 
-get_dag <- function(shows,setlists){
+# get_dag <- function(shows,setlists){
+#   
+#   setlists_1 <- setlists[which(shows %in% names(setlists))]
+#   
+#   song_positions <- do.call(rbind, lapply(setlists_1, function(setlist) {
+#     data.frame(Song = setlist, Position = seq_along(setlist))
+#   }))
+#   
+#   avg_positions <- aggregate(Position ~ Song, data = song_positions, mean)
+#   rownames(avg_positions) <- avg_positions$Song 
+#   
+#   
+#   edges <- unlist(lapply(setlists_1, function(setlist) {
+#     if (length(setlist) > 1) {
+#       transitions <- cbind(setlist[-length(setlist)], setlist[-1])
+#       return(as.vector(t(transitions))) 
+#     }
+#   }), use.names = FALSE)
+#   
+#   
+#   edges_with_shows <- do.call(rbind, lapply(names(setlists_1), function(show) {
+#     setlist <- setlists[[show]]
+#     if (length(setlist) > 1) {
+#       transitions <- data.frame(
+#         From = setlist[-length(setlist)],
+#         To = setlist[-1],
+#         Show = show
+#       )
+#       return(transitions)
+#     }
+#   }))
+#   
+#   starting_songs <- unique(sapply(setlists_1, function(setlist) setlist[1]))
+#   
+#   graph <- graph_from_data_frame(edges_with_shows, directed = TRUE)
+#   
+#   vertex_font_weight <- ifelse(V(graph)$name %in% starting_songs, 2, 1)
+#   
+#   layout <- layout_as_tree(graph) 
+#   y_positions <- -avg_positions[V(graph)$name, "Position"]
+#   
+#   layout <- cbind(layout[, 1], y_positions)
+#   
+#   show_colors <- setNames(sample(rainbow(length(setlists_1))), names(setlists_1)) 
+#   
+#   
+#   edge_colors <- show_colors[edges_with_shows$Show]
+#   
+#   plot(
+#     graph,
+#     layout = layout,
+#     vertex.label.font = vertex_font_weight,
+#     vertex.label.color = "black",
+#     edge.arrow.size = 0.2,
+#     edge.color = edge_colors,
+#     vertex.shape = "none",
+#     vertex.label.cex=.8,
+#     edge.curved=.2,
+#     main = "Setlist Directed Graph",
+#     asp = 1.5
+#   )
+#   
+#   
+# }
+
+get_dag <- function(shows,vwc){
   
-  setlists_1 <- setlists[which(shows %in% names(setlists))]
+  songlist <- vwc[,c("choice_name","sets","song_num")]
   
-  song_positions <- do.call(rbind, lapply(setlists_1, function(setlist) {
-    data.frame(Song = setlist, Position = seq_along(setlist))
-  }))
+  setlists_1 <- songlist[which(songlist$choice_name %in% shows),]
   
-  avg_positions <- aggregate(Position ~ Song, data = song_positions, mean)
-  rownames(avg_positions) <- avg_positions$Song 
+  setlists_1 <- setlists_1 %>%
+    group_by(choice_name) %>%
+    mutate(song_num = row_number()) %>%
+    ungroup()
+  
+  song_pos_avg <- setlists_1 %>%
+    select(
+      sets, song_num
+    ) %>%
+    group_by(
+      sets
+    ) %>%
+    summarize(
+      avg_pos = max(song_num)
+    ) %>%
+    mutate(
+      name = sets
+    )
+  
+  edges <- data.frame(From = NA, To = setlists_1$sets[1], Show = setlists_1$choice_name[1])
+  
+  for(i in 2:(nrow(setlists_1)-1)){
+    edges <- rbind(edges,data.frame(From = setlists_1$sets[i-1], To = setlists_1$sets[i], Show = setlists_1$choice_name[i]))
+  }
+  
+  for(show in shows){
+    edges <- edges[-min(which(edges$Show == show)),]
+  }
+  
+  edges <- na.omit(edges)
   
   
-  edges <- unlist(lapply(setlists_1, function(setlist) {
-    if (length(setlist) > 1) {
-      transitions <- cbind(setlist[-length(setlist)], setlist[-1])
-      return(as.vector(t(transitions))) 
-    }
-  }), use.names = FALSE)
+  starting_songs <- setlists_1$sets[setlists_1$song_num==1]
   
-  
-  edges_with_shows <- do.call(rbind, lapply(names(setlists_1), function(show) {
-    setlist <- setlists[[show]]
-    if (length(setlist) > 1) {
-      transitions <- data.frame(
-        From = setlist[-length(setlist)],
-        To = setlist[-1],
-        Show = show
-      )
-      return(transitions)
-    }
-  }))
-  
-  starting_songs <- unique(sapply(setlists_1, function(setlist) setlist[1]))
-  
-  graph <- graph_from_data_frame(edges_with_shows, directed = TRUE)
+  graph <- graph_from_data_frame(edges, directed = TRUE)
   
   vertex_font_weight <- ifelse(V(graph)$name %in% starting_songs, 2, 1)
   
-  layout <- layout_as_tree(graph) 
-  y_positions <- -avg_positions[V(graph)$name, "Position"]
-  
-  layout <- cbind(layout[, 1], y_positions)
-  
-  show_colors <- setNames(sample(rainbow(length(setlists_1))), names(setlists_1)) 
+  show_colors <- setNames(sample(rainbow(length(shows))), sort(unique(setlists_1$choice_name)))
   
   
-  edge_colors <- show_colors[edges_with_shows$Show]
+  edge_colors <- show_colors[edges$Show]
   
   plot(
     graph,
-    layout = layout,
+    layout = layout_with_sugiyama,,
     vertex.label.font = vertex_font_weight,
     vertex.label.color = "black",
     edge.arrow.size = 0.2,
     edge.color = edge_colors,
-    vertex.shape = "none",
+    vertex.shape = "rectangle",
     vertex.label.cex=.8,
-    edge.curved=.2,
+    vertex.color = "white",
+    vertex.frame.color = "white",
     main = "Setlist Directed Graph",
-    asp = 1.5
+    asp = 1.5,
+    arrow.mode = 0
   )
-  
+  legend("topright",bty = "n",
+         legend=unique(names(edge_colors)),
+         fill=unique(edge_colors), border=NA,
+         cex = 0.7)
   
 }
 
@@ -581,7 +678,7 @@ nav_panel("Song Totals",
             sidebarLayout(
               sidebarPanel(
                 
-                h5("This is a streamgraph of how many songs from each album they played at each show over time. You can see that they were pretty consistent.")
+                h5("This is a streamgraph of how many songs from each album they played at each show over time. You can see that they were pretty consistent. Note that festivals were taken out.")
                 
               ),
               
@@ -592,26 +689,45 @@ nav_panel("Song Totals",
             )
         
             ),
+
+nav_panel("Albums over time",
+          
+          titlePanel("Albums over time"),
+          
+          sidebarLayout(
+            sidebarPanel(
+              
+              h5("This is a line graph of how many songs from each album they played at each show over time. You can see that they were pretty consistent, but Contra did go up near the end. Loess smoothing was used. Note that festivals were taken out.")
+              
+            ),
+            
+            mainPanel(
+              plotOutput("lineplot")
+            )
+            
+          )
+          
+),
   
   
 #####
-# nav_panel("Album Percentages",
-#           
-#           titlePanel("What Album Percent Breakdown Did You See?"),
-#           sidebarLayout(
-#             
-#             sidebarPanel(
-#               h5("Check which shows you went to, and the pie chart will update to show you how many songs from each album they played, and the overall percentage."),
-#             checkboxGroupInput("cbperc", "Shows:", list_shows,selected = "Amsterdam")
-#             ),
-#             mainPanel(
-#               
-#               plotlyOutput("percplot")
-#               
-#             )
-#           )
-#           
-#           ),
+nav_panel("Album Percentages",
+
+          titlePanel("What Album Percent Breakdown Did You See?"),
+          sidebarLayout(
+
+            sidebarPanel(
+              h5("Check which shows you went to, and the pie chart will update to show you how many songs from each album they played, and the overall percentage."),
+            checkboxGroupInput("cbperc", "Shows:", list_shows,selected = "Amsterdam")
+            ),
+            mainPanel(
+
+              plotlyOutput("percplot")
+
+            )
+          )
+
+          ),
 
 #####
 nav_panel("Two Songs",
@@ -696,8 +812,8 @@ nav_panel("Order of Songs",
           sidebarLayout(
             
             sidebarPanel(
-              h5("Check which shows you went to, and the graph will update to show you what order you saw each song at. Bold songs were played first. The arrows are sometimes flipped, I don't know why. Again I took away the festivals because their setlists were different and it would make it even HARDER to read."),
-              checkboxGroupInput("dagshows", "Shows:", sort(names(setlists_f)),selected = "Amsterdam")
+              h5("Check which shows you went to, and the graph will update to show you what order you saw each song at. Bold songs were played first. Comparing two setlists works great, three and up is where it gets hard to read.  The arrows are sometimes flipped, I don't know why."),
+              checkboxGroupInput("dagshows", "Shows:", list_shows)
             ),
             mainPanel(
               
@@ -706,14 +822,14 @@ nav_panel("Order of Songs",
             )
           )
           
-),
+)
+)
+)
+
 
 
 #####
-  
-  )
-    
-)
+
 
 # Define server logic required to draw a histogram
 server <- function(input, output) {
@@ -740,6 +856,11 @@ server <- function(input, output) {
     output$sgplot <- renderPlot({
       
       get_streamgraph(album_percentages)
+      
+    })
+    output$lineplot <- renderPlot({
+      
+      get_linegraph(album_percentages_nf)
       
     })
     
@@ -847,7 +968,7 @@ server <- function(input, output) {
     
     output$dagplot <- renderPlot({
       
-      get_dag(input$dagshows,setlists_f)
+      get_dag(input$dagshows,vwc)
       },
       height = 1000
     )

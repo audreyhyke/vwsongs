@@ -8,11 +8,17 @@ library(plotly)
 load("data/setlistalbums.RData")
 load("data/albumcolors.RData")
 
+save(setlist_albums_songs, file = "vwshiny/data/setlistalbums.RData")
+
+setlist_albums_songs <- left_join(vwc[c("choice_name","album","sets")],albumcolors,by = "album")
+
+
+
 get_piechart <- function(shows,setlist_albums_songs){
   
   city_songs <- setlist_albums_songs %>%
     filter(
-      city.y %in% shows
+      choice_name %in% shows
     ) %>%
     select(
       album, sets, col
@@ -63,6 +69,8 @@ get_piechart <- function(shows,setlist_albums_songs){
   argh <- unique(as.data.frame(cbind(l,p,v,i,c)))
   
   argh <- arrange(argh,desc(v))
+  
+  print(argh)
   
   fig1 <- plot_ly(argh)
   

@@ -528,35 +528,53 @@ vwd<- vwd %>%
 
 citydate$num <- rev(1:52)
 
-album_percentages <- vwd %>%
-  group_by(city.y, album,col) %>% 
+album_percentages <- vwc %>%
+  group_by(choice_name, album,date) %>% 
   summarize(count = n(), .groups = "drop") %>% # Count songs per album per city
-  group_by(city.y) %>% 
-  mutate(percentage = (count / sum(count)))
+  group_by(choice_name) %>% 
+  mutate(percentage = (count / sum(count))) %>%
+  ungroup()
 
-citydate <- unique(vwd[,c("city.y","date")])
 
-citydate$num <- rev(seq(1,52))
+album_percentages_nf <- vwc %>%
+  filter(festival == "VW Show")
+  group_by(choice_name, album,date) %>% 
+  summarize(count = n(), .groups = "drop") %>% # Count songs per album per city
+  group_by(choice_name) %>% 
+  mutate(percentage = (count / sum(count))) %>%
+  ungroup()
 
-album_percentages <- album_percentages %>%
-  left_join(citydate, by = c("city.y" = "city.y"))
+album_percentages <- left_join(album_percentages,albumcolors,by="album")
 
-save(album_percentages,file = "data/album_per.RData")
+save(album_percentages,album_percentages_nf,file = "vwshiny/data/album_per.RData")
 
 
 album_percentages %>% 
-  ggplot(aes(x = num, y = percentage, fill = album)) +
+  ggplot(aes(x = date, y = percentage, fill = album)) +
   geom_area()
 
 
 
-ggplot(album_percentages, aes(num, fill = album)) +
+ggplot(album_percentages, aes(date, fill = album)) +
   geom_density(position = "fill")+
   scale_fill_manual(values = album_percentages$col)
 
-ggplot(album_percentages, aes(x = num, y = percentage, fill = album)) +
+ggplot(album_percentages, aes(x = date_num, y = percentage, fill = album)) +
   geom_bar(stat = "identity", position = "stack") +  # Bar plot reflecting percentages
-  scale_fill_manual(values = album_percentages$col)
+  scale_fill_manual(values = album_col)
+
+ggplot(album_percentages_nf, aes(x = date_num, y = percentage, group = album, col = album)) +
+  geom_line(alpha = 0.25) +
+  scale_color_manual(values = album_col)+
+  geom_smooth(method = "loess",se=FALSE) +
+  theme_minimal() +
+  theme(
+    axis.title.x = element_blank(),
+    axis.text.x  = element_blank(),
+    axis.ticks.x = element_blank(),
+    panel.grid.major.x = element_blank(),
+    panel.grid.minor.x = element_blank()
+  )
 
 print(vwd %>%
   filter(
@@ -574,6 +592,16 @@ print(vwd %>%
 library(ggstream)
 
 
+album_percentages_nf <- album_percentages_nf %>%
+  mutate(date_num = dense_rank(date))
+
+
+ggplot(album_percentages, aes(x = date_num, y = percentage, fill = album)) +
+  geom_stream( bw =0.6,color = 1, lwd = 0.3)+
+  scale_fill_manual(values = album_col) +
+  theme_void()
+
+
 
 write_csv(album_percentages,file = "albumper.csv")
 
@@ -584,6 +612,9 @@ fcol <- "#479A53"
 mcol <- "#828282"
 otcol <- "#E96586"
 
+
+album_col <- c("Vampire Weekend" = vwcol, "Contra" = ccol, "Only God Was Above Us" = ogcol, "Father of the Bride" = fcol, "Modern Vampires of the City" = mcol, "Other" = otcol)
+
 albumcolors <- as.data.frame(cbind(c("Contra","Vampire Weekend","Only God Was Above Us","Father of the Bride","Modern Vampires of the City","Other"),c(ccol,vwcol,ogcol,fcol,mcol,otcol)))
 
 colnames(albumcolors) <- c("album","col")
@@ -592,9 +623,9 @@ save(albumcolors, file = "data/albumcolors.RData")
 
 album_percentages$album <- factor(album_percentages$album, levels=rev(c("Only God Was Above Us", "Vampire Weekend", "Father of the Bride", "Modern Vampires of the City", "Contra", "Other")))
 
-ggplot(album_percentages, aes(x = num, y = count, fill = album)) +
-  geom_stream(type = "ridge", bw =0.6,color = 1, lwd = 0.3)+
-  scale_fill_manual(values = c(otcol,ccol,mcol,fcol,vwcol,ogcol)) +
+ggplot(album_percentages_nf, aes(x = date_num, y = count, fill = album)) +
+  geom_stream(type = "proportional", bw =0.6,color = 1, lwd = 0.3)+
+  scale_fill_manual(values = album_col) +
   theme_void()
 
 vws$date1 <- paste(vws$month,vws$day)
@@ -1265,7 +1296,7 @@ append(x,list(table(song_next$Cousins) / length(song_next$Cousins)))
 
 song_next_per <- list(paste(names(rev(sort(table(song_next[1])))),": ",round(rev(sort(table(song_next[1]))) / length(song_next[1][[1]]),2)*100," percent chance (",rev(sort(table(song_next[1])))," out of ",length(song_next[1][[1]])," times)",sep=""))
 
-names(song_next_per) <- names(song_next[i])
+names(song_next_per) <- names(song_next[1])
 
 
 for(i in 2:length(song_next)){

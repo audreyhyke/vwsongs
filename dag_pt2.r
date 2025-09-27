@@ -35,15 +35,17 @@ song_pos_avg <- songlist %>%
 shows <- c("New York 1","Minneapolis 1", "Bend")
 
 
-get_dag <- function(shows,songlist){
+get_dag <- function(shows,vwc){
   
-  setlists_1 <- songlist[which(songlist$city_num %in% shows),]
+  songlist <- vwc[,c("choice_name","sets","song_num")]
+  
+  setlists_1 <- songlist[which(songlist$choice_name %in% shows),]
   
   setlists_1 <- setlists_1 %>%
-    group_by(city_num) %>%
+    group_by(choice_name) %>%
     mutate(song_num = row_number()) %>%
     ungroup()
-  
+
   song_pos_avg <- setlists_1 %>%
     select(
       sets, song_num
@@ -58,10 +60,10 @@ get_dag <- function(shows,songlist){
       name = sets
     )
   
-  edges <- data.frame(From = NA, To = setlists_1$sets[1], Show = setlists_1$city_num[1])
+  edges <- data.frame(From = NA, To = setlists_1$sets[1], Show = setlists_1$choice_name[1])
   
   for(i in 2:(nrow(setlists_1)-1)){
-    edges <- rbind(edges,data.frame(From = setlists_1$sets[i-1], To = setlists_1$sets[i], Show = setlists_1$city_num[i]))
+    edges <- rbind(edges,data.frame(From = setlists_1$sets[i-1], To = setlists_1$sets[i], Show = setlists_1$choice_name[i]))
   }
   
   for(show in shows){
@@ -80,32 +82,32 @@ get_dag <- function(shows,songlist){
   layout <- layout_as_tree(graph) 
   
   
-  y_positions <- -song_pos_avg$avg_pos[match(V(graph)$name, song_pos_avg$sets)]
+  # y_positions <- -song_pos_avg$avg_pos[match(V(graph)$name, song_pos_avg$sets)]
+  # 
+  # layout <- cbind(layout[, 1], y_positions)
   
-  layout <- cbind(layout[, 1], y_positions)
   
-  
-  if(length(shows) == 2){
-  x_positions <- as.vector(ifelse(sapply(V(graph)$name, function(x) sum(setlists_1$sets == x)) > 1,0,ifelse(V(graph)$name %in% setlists_1$sets[which(setlists_1$city_num == shows[1])],-1,1)))
-  
-  layout <- cbind(x_positions,layout[,2])
-  
-  }
-  
-  if(length(shows) == 3){
-    x_positions <- ifelse(V(graph)$name %in% setlists_1$sets[setlists_1$city_num == shows[1]], 0, ifelse(V(graph)$name %in% setlists_1$sets[setlists_1$city_num == shows[2]], -1,1))
-    
-    layout <- cbind(x_positions,layout[,2])
-    
-  }
-  show_colors <- setNames(sample(rainbow(length(shows))), sort(unique(setlists_1$city_num)))
+  # if(length(shows) == 2){
+  # x_positions <- as.vector(ifelse(sapply(V(graph)$name, function(x) sum(setlists_1$sets == x)) > 1,0,ifelse(V(graph)$name %in% setlists_1$sets[which(setlists_1$choice_name == shows[1])],-1,1)))
+  # 
+  # layout <- cbind(x_positions,layout[,2])
+  # 
+  # }
+  # 
+  # if(length(shows) == 3){
+  #   x_positions <- ifelse(V(graph)$name %in% setlists_1$sets[setlists_1$choice_name == shows[1]], 0, ifelse(V(graph)$name %in% setlists_1$sets[setlists_1$choice_name == shows[2]], -1,1))
+  #   
+  #   layout <- cbind(x_positions,layout[,2])
+  #   
+  # }
+  show_colors <- setNames(sample(rainbow(length(shows))), sort(unique(setlists_1$choice_name)))
   
   
   edge_colors <- show_colors[edges$Show]
   
   plot(
     graph,
-    layout = layout,
+    layout = layout_with_sugiyama,
     vertex.label.font = vertex_font_weight,
     vertex.label.color = "black",
     edge.arrow.size = 0.2,
@@ -118,13 +120,15 @@ get_dag <- function(shows,songlist){
     asp = 1.5,
     arrow.mode = 0
   )
-  legend("bottomright",bty = "n",
+  legend("topleft",bty = "n",
          legend=unique(names(edge_colors)),
          fill=unique(edge_colors), border=NA,
          cex = 0.7)
   
 }
 
+
+get_dag(list_shows[c(45,42)],vwc)
 
 
 

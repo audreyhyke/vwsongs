@@ -335,7 +335,7 @@ get_dag <- function(shows,setlists){
 }
 
 
-get_dag(c("Amsterdam","Paris","London 4"),setlists_f)
+get_dag(c("Amsterdam","Paris","London 4"),song_show_wide)
 
 
 
