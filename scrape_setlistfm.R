@@ -3,6 +3,7 @@ library(rvest)
 library(urltools)
 library(purrr)
 library(dplyr)
+library(rvest)
 
 setwd("~/.")
 
@@ -97,15 +98,29 @@ get_songs <- function(link) {
    if(!is.na(festival)){
      fest <- festival_name
    }
+   
+   
+   parts <- session %>% html_nodes("li.setlistParts")
+   classes <- parts %>% html_attr("class")
+   
+   is_encore_marker <- grepl("encore", classes)   # li that says Encore:
+   is_song          <- grepl("song",   classes)   # li that holds a song
+   
+   # songs in order
+   song_nodes <- parts[is_song]
+   songs <- song_nodes %>% html_node(".songLabel") %>% html_text()
+   
+   # flag songs that occur after the encore marker
+   encore_flag <- cumsum(is_encore_marker)[is_song] > 0
 
-   set_list <- list(sets = sets, artist = artist, venue = venue, month = month, day = day, year = year, tour = tour, festival = fest)
+   set_list <- list(sets = sets, artist = artist, venue = venue, month = month, day = day, year = year, tour = tour, festival = fest, encore = encore_flag)
    }
 }
 
 scrape_artist <- function (artist_name, link) {
 
    # first get the number of pages we'll need to crawl from setlist.fm
-   num <- 10
+   num <- 1
    # make a sequence to pass to map2 to build the URLs to scrape
    nums <- seq(1, num, 1)
    # repeat the base URL num number of times because map2 expectes vectors of equal length
@@ -128,7 +143,7 @@ scrape_artist <- function (artist_name, link) {
       group_by(artist, venue, month, day, year) %>%
       mutate(song_num = row_number())
    ### write the scrape to disk
-   write_csv(set_lists_final, paste0(artist_name, "_set_lists_pt2.csv"))
+   write_csv(set_lists_final, paste0(artist_name, "_set_lists_pt2_encore.csv"))
 }
 
 
@@ -152,7 +167,7 @@ ndny <- c("New Dorp. New York")
 
 names(ndny) <- "sets"
 
-vw<- rbind(vw,unlist(c(ndny,vw[SNDNY,-1])))
+vw<- rbind(vw[1:SNDNY,],unlist(c(ndny,vw[SNDNY,-1])),vw[1+SNDNY:nrow(vw),])
 
 vw$sets <- ifelse(sapply(vw$sets, function(x) "Flower Moon" %in% x),"Flower Moon", vw$sets)
 
@@ -1363,4 +1378,147 @@ song_show <- setlist_albums_songs %>%
   select(
     city.y,sets
   )
+
+vwc %>%
+  group_by(choice_name,sets) %>%
+  filter(
+    length(which(sets == "A-Punk")) > 1
+  ) %>%
+  select(
+    choice_name
+  ) %>%
+  unique()
+
+
+
+
+openers_nf <- vwc %>%
+  filter(
+    festival == "VW Show"
+  ) %>%
+  select(
+    sets,song_num
+  ) %>%
+  filter (
+    song_num == 1
+  ) %>%
+  group_by(sets) %>%
+  summarize(
+    n = n()
+  ) %>%
+  arrange(desc(n))
+
+
+closers_nf <- vwc %>%
+  filter(
+    festival == "VW Show"
+  ) %>%
+  group_by(
+    choice_name
+  ) %>%
+  filter(
+    song_num == max(song_num)
+  ) %>%
+  ungroup() %>%
+  select(
+    sets
+    ) %>%
+  group_by(
+    sets
+  ) %>%
+  summarize(
+    n = n()
+  ) %>%
+  arrange(desc(n))
+  
+
+  
+  
+##### for hannah's query ######
+
+vw_b4end <- vw %>%
+  select(
+    song_num, sets
+  ) %>%
+  mutate(
+    last = F
+  )
+
+vw_b4end <- vw_b4end %>%
+  mutate(
+    date = as.Date(paste0(vw$year,"-",vw$month,"-",vw$day), format = "%Y-%b-%d")
+  )
+
+for(i in 2:(nrow(vw)-3)){
+  if(vw_b4end$sets[i-1] %in% albums$song && all(!(vw_b4end$sets[i:(i+3)] %in% albums$song)) && vw_b4end$song_num[i] > 1 && all(!(vw_b4end$last[vw_b4end$date == vw_b4end$date[i]])))
+    vw_b4end$last[i-1] <- T
+}
+
+table(vw_b4end$sets[which(vw_b4end$last)])
+
+  
+vwc <- read.csv("/Users/audrey/vwsongs/vw_set_lists_pt2.csv")
+
+
+vwc %>%
+  filter(
+    sets == "Hannah Hunt"
+  ) %>%
+  nrow()
+
+vwc %>%
+  filter(
+    sets == "Ya Hey",
+    str_detect(city_num, "1") | str_detect(city_num, "3")
+  ) %>%
+  nrow()
+
+
+vwc %>%
+  filter(
+    sets == "Ya Hey",
+    str_detect(city_num, "2") | str_detect(city_num, "4") 
+  ) %>%
+  nrow()
+
+
+vwc %>%
+  group_by(
+    city_num
+  ) %>%
+  mutate(
+    hh = ifelse("Hannah Hunt" %in% sets, T, F)
+  ) %>%
+  select(
+    date, hh
+  ) %>%
+  unique() %>%
+  ungroup() %>%
+  arrange(
+    date
+  )%>%
+  mutate(
+    ind = 1,
+    day = row_number()
+  ) %>%
+  ggplot(
+    aes(x = day, y = ind, fill = hh)
+  ) +
+  geom_tile() +
+  theme_void() 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

@@ -254,11 +254,17 @@ get_song_totalsVW <- function(shows,vwc,albums) {
     data_color(
       columns = 'Vampire Weekend',
       target_columns = everything(),
-      colors = col_numeric(c("white", "orange"), domain = c(0,length(shows)+1))
+      colors = col_numeric(c("white", "orange"), domain = c(0,length(shows)))
     )%>%
     tab_options(
       table.font.size = 12
-    )
+    )%>%
+    tab_style(
+      style = list(cell_fill(color = "orange"), cell_text(color = "black")),
+      locations = cells_body(
+        columns = everything(),
+        rows = `Vampire Weekend` > length(shows)
+      ))
   
   return(VW_gt)
 }
@@ -474,7 +480,7 @@ get_song_totalsO <- function(shows,vwc,albums) {
 # }
 
 get_dag <- function(shows,vwc){
-  
+  if(length(shows)>0){
   songlist <- vwc[,c("choice_name","sets","song_num")]
   
   setlists_1 <- songlist[which(songlist$choice_name %in% shows),]
@@ -500,13 +506,13 @@ get_dag <- function(shows,vwc){
   
   edges <- data.frame(From = NA, To = setlists_1$sets[1], Show = setlists_1$choice_name[1])
   
-  for(i in 2:(nrow(setlists_1)-1)){
+  for(i in 2:(nrow(setlists_1))){
     edges <- rbind(edges,data.frame(From = setlists_1$sets[i-1], To = setlists_1$sets[i], Show = setlists_1$choice_name[i]))
   }
   
-  for(show in shows){
-    edges <- edges[-min(which(edges$Show == show)),]
-  }
+   for(show in shows){
+     edges <- edges[-min(which(edges$Show == show)),]
+   }
   
   edges <- na.omit(edges)
   
@@ -541,7 +547,7 @@ get_dag <- function(shows,vwc){
          legend=unique(names(edge_colors)),
          fill=unique(edge_colors), border=NA,
          cex = 0.7)
-  
+  }
 }
 
 # Define UI for application that draws a histogram
@@ -555,7 +561,9 @@ nav_panel("Home",
           
           titlePanel("VW OGWAU Tour Statistics"),
           
-          h5("I was super bored and missing the OGWAU tour so here are some statistics on it. I do not claim to be smart or knowledgeable in statistics even though I got a degree in it.")
+          h5("I was super bored and missing the OGWAU tour so here are some statistics on it. I do not claim to be smart or knowledgeable in statistics even though I got a degree in it."),
+          
+          h6("The maps and heatmap aren't updated for part 2 of the tour. Everything will be finalized Nov 9th following the end of the OGWAU tour cycle.")
           
           
           
@@ -595,6 +603,7 @@ nav_panel("Song Totals",
               width = 2
             ),
             mainPanel(
+              textOutput("perctext"),
               fluidRow( # First row for the first table
                 column(2, # Occupy 6 out of 12 columns (half width)
                        gt_output("albumtableVW")
@@ -622,7 +631,24 @@ nav_panel("Song Totals",
 
 
 
-    
+#####
+nav_panel("Album Percentages",
+          
+          titlePanel("What Album Percent Breakdown Did You See?"),
+          sidebarLayout(
+            
+            sidebarPanel(
+              h5("Check which shows you went to, and the pie chart will update to show you how many songs from each album they played, and the overall percentage."),
+              checkboxGroupInput("cbperc", "Shows:", list_shows,selected = "Amsterdam")
+            ),
+            mainPanel(
+              
+              plotlyOutput("percplot")
+              
+            )
+          )
+          
+),
 #####
     nav_panel("Clusters",
     
@@ -671,25 +697,6 @@ nav_panel("Song Totals",
   ),
   
 #####
-  nav_panel("Streamgraph",
-            
-            titlePanel("Streamgraph"),
-            
-            sidebarLayout(
-              sidebarPanel(
-                
-                h5("This is a streamgraph of how many songs from each album they played at each show over time. You can see that they were pretty consistent. Note that festivals were taken out.")
-                
-              ),
-              
-              mainPanel(
-                plotOutput("sgplot")
-              )
-              
-            )
-        
-            ),
-
 nav_panel("Albums over time",
           
           titlePanel("Albums over time"),
@@ -697,12 +704,13 @@ nav_panel("Albums over time",
           sidebarLayout(
             sidebarPanel(
               
-              h5("This is a line graph of how many songs from each album they played at each show over time. You can see that they were pretty consistent, but Contra did go up near the end. Loess smoothing was used. Note that festivals were taken out.")
+              h5("These are a line graph and stream graph of how many songs from each album they played at each show over time. You can see that they were pretty consistent, but Contra did go up near the end. Loess smoothing was used for the line graph. Note that festivals were taken out.")
               
             ),
             
             mainPanel(
-              plotOutput("lineplot")
+              plotOutput("lineplot"),
+              plotOutput("sgplot")
             )
             
           )
@@ -710,24 +718,7 @@ nav_panel("Albums over time",
 ),
   
   
-#####
-nav_panel("Album Percentages",
 
-          titlePanel("What Album Percent Breakdown Did You See?"),
-          sidebarLayout(
-
-            sidebarPanel(
-              h5("Check which shows you went to, and the pie chart will update to show you how many songs from each album they played, and the overall percentage."),
-            checkboxGroupInput("cbperc", "Shows:", list_shows,selected = "Amsterdam")
-            ),
-            mainPanel(
-
-              plotlyOutput("percplot")
-
-            )
-          )
-
-          ),
 
 #####
 nav_panel("Two Songs",
@@ -866,6 +857,63 @@ server <- function(input, output) {
     
     output$percplot <- renderPlotly({
       get_piechart(input$cbperc,setlist_albums_songs)
+    })
+    
+    output$perctext <- renderText({
+  
+     show_sets  <- vwc %>% filter(choice_name %in% input$setshows) 
+     
+    sets_shows <- setlist_albums_songs %>% filter(choice_name %in% input$setshows) %>% filter(duplicated(sets) == FALSE)
+      #songs_played <- setlist_albums_songs %>% filter(choice_name %in% input$setshows) %>% group_by(sets) %>% summarize(nplayed = n())
+      
+      At <- albums %>%
+        group_by(album) %>%
+        summarize(
+          nalbum = n()
+        )
+      An <- sets_shows %>% group_by(album) %>% summarize(nsong=n())
+      
+      Ap <- left_join(An,At,by = "album") %>% mutate(aPerc = nsong/nalbum)
+      
+      openers <- show_sets %>%
+        select(
+          sets,song_num
+        ) %>%
+        filter (
+          song_num == 1
+        ) %>%
+        group_by(sets) %>%
+        summarize(
+          n = n()
+        ) %>%
+        arrange(
+          desc(n)
+        )
+      
+      closers <- show_sets %>%
+        group_by(
+          choice_name
+        ) %>%
+        filter(
+          song_num == max(song_num)
+        ) %>%
+        ungroup() %>%
+        select(
+          sets
+        ) %>%
+        group_by(
+          sets
+        ) %>%
+        summarize(
+          n = n()
+        ) %>%
+        arrange(
+          desc(n)
+          )
+      
+      txt <- paste0("How lucky are you! At ",length(input$setshows)," show(s), you've seen ",round(Ap$aPerc[Ap$album=="Vampire Weekend"],4)*100,"% of Vampire Weekend, ",round(Ap$aPerc[Ap$album=="Contra"],4)*100,"% of Contra, ",round(Ap$aPerc[Ap$album=="Modern Vampires of the City"],4)*100,"% of Modern Vampires of the City, ",round(Ap$aPerc[Ap$album=="Father of the Bride"],4)*100,"% of Father of the Bride, and ",round(Ap$aPerc[Ap$album=="Only God Was Above Us"],4)*100,"% of Only God Was Above Us live on this tour run. There have been ",nrow(sets_shows)," unique songs played. The most common opener was ",openers[1,1][[1]]," at ",openers[1,2][[1]]," times, and the most common closer was ",closers[1,1][[1]]," at ",closers[1,2][[1]]," times.")
+      
+      return(txt)
     })
     
     output$fstable <- renderTable({

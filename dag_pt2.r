@@ -62,8 +62,8 @@ get_dag <- function(shows,vwc){
   
   edges <- data.frame(From = NA, To = setlists_1$sets[1], Show = setlists_1$choice_name[1])
   
-  for(i in 2:(nrow(setlists_1)-1)){
-    edges <- rbind(edges,data.frame(From = setlists_1$sets[i-1], To = setlists_1$sets[i], Show = setlists_1$choice_name[i]))
+  for(i in 1:(nrow(setlists_1)-1)){
+    edges <- rbind(edges,data.frame(From = setlists_1$sets[i], To = setlists_1$sets[i+1], Show = setlists_1$choice_name[i]))
   }
   
   for(show in shows){
@@ -128,7 +128,7 @@ get_dag <- function(shows,vwc){
 }
 
 
-get_dag(list_shows[c(45,42)],vwc)
+get_dag(list_shows[c(45,54,21,42)],vwc)
 
 
 
