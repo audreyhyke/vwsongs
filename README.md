@@ -1,8 +1,10 @@
 # Vampire Weekend Setlist Analysis
 
-An interactive exploration of Vampire Weekend's live setlists, built with R and Shiny using data from [setlist.fm](https://www.setlist.fm/).
+An interactive exploration of Vampire Weekend's live setlists from their most recent tour (2024–2025, supporting *Only God Was Above Us*), built with R and Shiny using data from [setlist.fm](https://www.setlist.fm/).
 
 **[Open the app → audreyhyke.shinyapps.io/vwshiny](https://audreyhyke.shinyapps.io/vwshiny/)**
+
+> **Last updated December 2025.** The data and analysis haven't been updated since then, so shows added to setlist.fm after that aren't included.
 
 *The app is hosted on shinyapps.io, so it may take a few seconds to wake up on first load.*
 
