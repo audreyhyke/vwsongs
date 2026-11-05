@@ -4,7 +4,7 @@ An interactive exploration of Vampire Weekend's live setlists from their most re
 
 **[Open the app → audreyhyke.shinyapps.io/vwshiny](https://audreyhyke.shinyapps.io/vwshiny/)**
 
-> **Last updated December 2025.** The data and analysis haven't been updated since then, so shows added to setlist.fm after that aren't included.
+> **Last updated December 2025.** The published data includes shows up to September 27, 2025 (Ocean's Calling). Later shows from the end of the tour aren't included.
 
 *The app is hosted on shinyapps.io, so it may take a few seconds to wake up on first load.*
 
