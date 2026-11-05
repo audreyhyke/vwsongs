@@ -3,7 +3,7 @@ library(dendextend)
 
 rm(list = ls())
 
-songp <- as.data.frame(read_csv("data/songpos.csv"))
+songp <- as.data.frame(read_csv("data/raw/songpos.csv"))
 
 rownames(songp) <- songp[,1]
 

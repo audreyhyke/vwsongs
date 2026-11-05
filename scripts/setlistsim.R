@@ -1,12 +1,14 @@
 library(markovchain)
 library(tidyverse)
 
-load("/vwshiny/data/vwc_pt2.RData")
+load("~/vwsongs/vwshiny/data/vwc_pt2.RData")
 
 vwc_o <- vwc %>%
   mutate(
     sets_o = ifelse(song_num %in% c(1,2,3) & sets %in% c("Campus","Cape Cod Kwassa Kwassa","Cousins","Diane Young","M79", "Oxford Comma","Unbelievers"), paste0(sets," (opener)"),sets)
   )
+
+write_csv(vwc_o, file = "data/vw_setlist_o.csv")
 
 
 vwc_o %>%
@@ -134,6 +136,22 @@ setlists <- vwc %>%
   pivot_wider(
     names_from = city_num,
     values_from = sets
+  )
+
+setlists_o <- vwc_o %>%
+  filter(
+    festival == "VW Show"
+  ) %>%
+  group_by(city_num) %>%
+  arrange(
+    song_num
+  ) %>%
+  select(
+    sets_o
+  ) %>%
+  pivot_wider(
+    names_from = city_num,
+    values_from = sets_o
   )
 
 
@@ -282,7 +300,7 @@ sim_mansard <- simulate_many(n_sets = 5,
                              start_song = "Mansard Roof",
                              allow_repeat = FALSE)
 
-closers <- c("Walcott", "Ya Hey")  # <- adjust to your anchors
+closers <- c("Walcott", "Ya Hey")  
 sim_with_closer <- simulate_many(n_sets = 5,
                                  chain = chain,
                                  len_dist = len_dist,
@@ -294,63 +312,11 @@ sim_with_closer <- simulate_many(n_sets = 5,
 song_choice <- c("Sunflower","Hannah Hunt")
 song_choice <- c("Holiday","Ice Cream Piano","Hope")
 
-setlists_o <- list()
-
-for(show in setlists){
-  show <- show[[1]]
-  if("Cousins" %in% show){
-    i <- which(show=="Cousins")
-    if(i < 4){
-      show[i] <- "Cousins (opener)"
-    }
-  }
-  if("Cape Cod Kwassa Kwassa" %in% show){
-    i <- which(show=="Cape Cod Kwassa Kwassa")
-    if(i < 4){
-      show[i] <- "Cape Cod Kwassa Kwassa (opener)"
-    }
-  }
-  if("M79" %in% show){
-    i <- which(show=="M79")
-    if(i < 4){
-      show[i] <- "M79 (opener)"
-    }
-  }
-  
-  if("Campus" %in% show){
-    i <- which(show=="Campus")
-    if(i < 4){
-      show[i] <- "Campus (opener)"
-    }
-  }
-  
-  if("Oxford Comma" %in% show){
-    i <- which(show=="Oxford Comma")
-    if(i < 4){
-      show[i] <- "Oxford Comma (opener)"
-    }
-  }
-  if("Unbelievers" %in% show){
-    i <- which(show=="Unbelievers")
-    if(i < 4){
-      show[i] <- "Unbelievers (opener)"
-    }
-  }
-  
-  if("Diane Young" %in% show){
-    i <- which(show=="Diane Young")
-    if(i < 4){
-      show[i] <- "Diane Young (opener)"
-    }
-  }
-  setlists_o <- append(setlists_o,list(show))
-}
-
-names(setlists_o) <- names(setlists)
 
 
 scsets <- list()
 for(show in setlists_o){
+  show <- show[[1]]
   if(all(song_choice %in% show)){
     scsets<- append(scsets,list(show))
   }
@@ -440,6 +406,7 @@ song_choice <- c("New Dorp. New York")
 
 scsets <- list()
 for(show in setlists_o){
+  show <- show[[1]]
   if(all(song_choice %in% show)){
     scsets<- append(scsets,list(show))
   }
@@ -716,7 +683,7 @@ for(i in 1:(length(core_songs)-1)){
   avg_run <- rep(NA, avg_length)
   for(ind in 1:length(othersongs)){
   avg_run <- othersongs %>%
-    map(i) %>%/;;;;;;;;;;;;;;[']]]]]]]]]]]]p']
+    map(i) %>%
     unlist() %>%
     table() %>%
     which.max() %>%
@@ -738,12 +705,113 @@ vwc %>%
     festival, venue, date 
   )
   
+#############
+
+song_choice <- c("Run")
+
+scsets <- list()
+
+for(show in setlists_o){
+  show <- show[[1]]
+  if(all(song_choice %in% show)){
+    scsets<- append(scsets,list(show))
+  }
+}
 
 
+scsetsse <- map(scsets, ~ c("start", .x, "end"))
 
+core_songs <- scsetsse %>%
+  Reduce(intersect,.)
 
+num_songs_sc <- map_dfr(
+  seq_along(scsetsse),
+  function(i) {
+    tibble(
+      show_id = i,
+      song = scsetsse[[i]],
+      song_num = seq_along(scsetsse[[i]])
+    )
+  }
+)
 
+num_coresong <- num_songs_sc %>%
+  filter(song %in% core_songs) %>%
+  group_by(song) %>%
+  summarise(
+    avg_song_num = mean(song_num)
+  ) %>%
+  arrange(avg_song_num)
 
+for(s in 1:ceiling(num_coresong$avg_song_num[nrow(num_coresong)])){
+  print("=====")
+  print(s)
+  print(cs)
+  print("=====")
+  if(s == 1){
+    avg_set <- list("start")
+    cs <- 2
+    print("case1")
+    print(s)
+  }
+  else if(s == 2){
+    song1 <- scsetsse %>%
+      map(2) %>%
+      unlist() %>%
+      unname() %>%
+      table() %>%
+      which.max() %>%
+      names()
+    avg_set <- append(avg_set,song1)
+    if(song1 %in% core_songs){
+      cs <- 3
+    }
+    print("case2")
+    print(s)
+  }
+  else if(avg_set[s-1]=="end"){
+    #avg_set <- append(avg_set,"end")
+    print("case3")
+    print(s)
+    break
+  }
+  else if(s >= num_coresong$avg_song_num[cs]){
+    avg_set <- append(avg_set,num_coresong[cs,"song"])
+    cs <- cs + 1
+    print("case4")
+    print(s)
+  }
+  else{
+    old <- avg_set[s-1]
+    new <- num_songs_sc[which(num_songs_sc$song == old)+1,"song"] %>%
+      filter(
+        !(song %in% setdiff(unlist(avg_set),names(new)))
+      ) %>%
+      table()
+    new <- which(new==max(new)) %>%
+      names()
+    if(all(new %in% core_songs)){
+      new <- num_coresong %>% 
+        filter(song %in% new) %>% 
+        slice_min(avg_song_num, n = 1) %>% 
+        pull(song)
+    } else{
+      new <- new[1]
+    }
+    if(!is.na(new)){
+    avg_set <- append(avg_set,new)}
+    if(new %in% core_songs){
+      cs <- cs + 1
+    }
+    print("case5")
+    print(s)
+    
+  }
+  #print(s)
+  #print(unname(unlist(avg_set)))
+}
+
+unname(unlist(avg_set))
 
 
 

@@ -73,6 +73,6 @@ get_song_totals <- function(shows,vwc,albums) {
 
 shows = unique(vwc$choice_name)[3:6]
 
-get_song_totals(shows,vwc,albums)
+gts <- get_song_totals(shows,vwc,albums)
 
 

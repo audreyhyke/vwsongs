@@ -32,7 +32,7 @@ song_pos_avg <- songlist %>%
   )
 
 
-shows <- c("New York 1","Minneapolis 1", "Bend")
+shows <- unique(vwc$choice_name)[c(56,31)]
 
 
 get_dag <- function(shows,vwc){
@@ -128,7 +128,7 @@ get_dag <- function(shows,vwc){
 }
 
 
-get_dag(list_shows[c(45,54,21,42)],vwc)
+get_dag(shows,vwc)
 
 
 

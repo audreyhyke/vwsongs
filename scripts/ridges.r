@@ -72,7 +72,7 @@ sets_avg <- sets_sn %>%
     song_avg = mean(song_num)
   )
 
-sets_sn <- sets_sn %>%
+sets_snn <- sets_sn %>%
   left_join(
     sets_avg, by = "sets"
   ) %>%
@@ -98,11 +98,14 @@ sets_sn01 <- sets_sn %>%
 sets_sn01 <- cbind(sets_sn01,sets_01$song_num01)
 names(sets_sn01) <- c(names(sets_sn01)[1:5],"song_num01")
 
+# write.csv(sets_sn01,file = "data/sets_sn01.csv")
 
-ggplot(sets_sn01,aes(x = song_num01, y = sets, fill = anchor)) +
+
+ridges_plot <- ggplot(sets_sn01,aes(x = song_num01, y = sets, fill = anchor)) +
   geom_density_ridges(
     alpha = 0.75,
-    linewidth = 0.3
+    linewidth = 0.3,
+    color = "grey24"
   ) +
   theme_ridges()+
   xlab("Scaled Song Position") +
@@ -112,26 +115,26 @@ ggplot(sets_sn01,aes(x = song_num01, y = sets, fill = anchor)) +
     limits = c("> 70","<= 70")
   )
 
-ggplot(sets_sn,aes(x = song_num, y = sets)) +
-  geom_segment(
-    data = distinct(sets_sn, sets),
-    aes(x = -10, xend = 37, y = sets, yend = sets),
-    color = "white", linewidth = 0.45
-  ) +
-  geom_density_ridges(
-    fill = "black",
-    scale = 5,
-    bandwidth = 0.76,
-    col = "white",
-    linewidth = 0.4
-  ) +
-  theme_void() +
-  xlim(-10,40) + 
-  theme(plot.background = element_rect(fill = "black")) 
+# ggplot(sets_sn,aes(x = song_num, y = sets)) +
+#   geom_segment(
+#     data = distinct(sets_sn, sets),
+#     aes(x = -10, xend = 37, y = sets, yend = sets),
+#     color = "white", linewidth = 0.45
+#   ) +
+#   geom_density_ridges(
+#     fill = "black",
+#     scale = 5,
+#     bandwidth = 0.76,
+#     col = "white",
+#     linewidth = 0.4
+#   ) +
+#   theme_void() +
+#   xlim(-10,40) + 
+#   theme(plot.background = element_rect(fill = "black")) 
+# 
+#   
 
-  
-
-
+save(sets_sn01,ridges_plot, file = "vwshiny/data/ridges.RData")
 
 
 

@@ -3,7 +3,7 @@ library(ggpubr)
 library(factoextra)
 
 load("data/ClusteringAuto.RData")
-simmat <- read.csv("data/similaritymatrixdc.csv",check.names=FALSE)
+simmat <- read.csv("data/raw/similaritymatrixdc.csv",check.names=FALSE)
 rownames(simmat) <- colnames(simmat)
 
 list_clusters <- function(simmat,song,clust,clustassign){
@@ -18,4 +18,4 @@ plot_clusters <- function(kmeans_result,simmat,clust){
 }
 
 list_clusters(simmat, "Step",10,clustassign)
-plot_clusters(kmeans_results,simmat,10)
+plot_clusters(kmeans_results,similarity_matrix,2)

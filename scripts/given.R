@@ -4,8 +4,8 @@ library(pheatmap)
 library(stringr)
 
 
-load("data/given.RData")
-load("data/vwd.RData")
+#load("data/given.RData")
+#load("data/vwd.RData")
 
 
 colnames(given) <- unique(vwd$sets)
@@ -33,14 +33,14 @@ percent_given <- function(given,song1,song2){
 }
 
 all_percent_given <- function(given,song){
-  return(cbind(rownames(given),t(round(given[which(colnames(given) == song),],2))))
+  return(unname(cbind(rownames(given),round(given[which(rownames(given) == song),],2))))
 }
 
 percent_given(given,"Connect","Sympathy")
 
-percent_given(given,"Sympathy","Connect")
+percent_given(given,"Hannah Hunt","Pravda")
 
-all_percent_given(given,"Sympathy")
+all_percent_given(given,"Hannah Hunt")
 
 
 

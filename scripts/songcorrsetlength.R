@@ -2,7 +2,7 @@ rm(list = ls())
 library(ggplot2)
 library(tidyverse)
 
-load("song_shows.RData")
+load("data/raw/song_shows.RData")
 
 song_show_f <- song_show %>%
   filter(

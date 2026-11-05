@@ -5,7 +5,7 @@ library(purrr)
 library(dplyr)
 library(rvest)
 
-setwd("~/.")
+setwd("~/vwsongs")
 
 get_pages <- function(link){
 
@@ -120,7 +120,7 @@ get_songs <- function(link) {
 scrape_artist <- function (artist_name, link) {
 
    # first get the number of pages we'll need to crawl from setlist.fm
-   num <- 1
+   num <- 10
    # make a sequence to pass to map2 to build the URLs to scrape
    nums <- seq(1, num, 1)
    # repeat the base URL num number of times because map2 expectes vectors of equal length
@@ -143,7 +143,7 @@ scrape_artist <- function (artist_name, link) {
       group_by(artist, venue, month, day, year) %>%
       mutate(song_num = row_number())
    ### write the scrape to disk
-   write_csv(set_lists_final, paste0(artist_name, "_set_lists_pt2_encore.csv"))
+   write_csv(set_lists_final, paste0("data/raw/", artist_name, "_set_lists_pt2_encoreF.csv"))
 }
 
 
@@ -152,24 +152,24 @@ scrape_artist <- function (artist_name, link) {
 scrape_artist("vw", "https://www.setlist.fm/search?query=vampire+weekend")
 
 
-vw <- read.csv(file = "vw_set_lists_pt2.csv")
+vwF <- read.csv(file = "data/raw/vw_set_lists_pt2_encoreF.csv")
 
 # one has "Sympathy / New Dorp. New York" as song
-vw[which("SNL Closing Theme (A Waltz in A) / Flower Moon" == vw$sets),1] <- "Flower Moon"
+# vw[which("SNL Closing Theme (A Waltz in A) / Flower Moon" == vw$sets),1] <- "Flower Moon"
 
-vw[which("Married in a Gold Rush / All the Gold in California / Sin City / Cumberland Blues / Possum" == vw$sets),1] <- "Cocaine Cowboys"
+vwF[which("Married in a Gold Rush / All the Gold in California / Sin City / Cumberland Blues / Possum" == vwF$sets),1] <- "Cocaine Cowboys"
 
-SNDNY <- which("Sympathy / New Dorp. New York" == vw$sets)
+SNDNY <- which("Sympathy / New Dorp. New York" == vwF$sets)
 
-vw[SNDNY,1] <- "Sympathy"
+vwF[SNDNY,1] <- "Sympathy"
 
 ndny <- c("New Dorp. New York")
 
 names(ndny) <- "sets"
 
-vw<- rbind(vw[1:SNDNY,],unlist(c(ndny,vw[SNDNY,-1])),vw[1+SNDNY:nrow(vw),])
+vwF<- rbind(vwF[1:SNDNY,],unlist(c(ndny,vwF[SNDNY,-1])),vwF[1+SNDNY:nrow(vwF),])
 
-vw$sets <- ifelse(sapply(vw$sets, function(x) "Flower Moon" %in% x),"Flower Moon", vw$sets)
+# vw$sets <- ifelse(sapply(vw$sets, function(x) "Flower Moon" %in% x),"Flower Moon", vw$sets)
 
 albums <- read.csv("vwshiny/data/songalbums.csv",header = T)
 
@@ -178,7 +178,7 @@ names(albums) <- c("num","sets", "album")
 
 ### cocaine cowboys???
 
-vw_vwsongs <- vw %>%
+vw_vwsongs <- vwF %>%
   left_join(albums, by = "sets")
 
 vwna <- na.omit(vw_vwsongs)
@@ -192,10 +192,10 @@ for(st in vwna[,3]){
 city <- city[-1]
 
 vwna <- cbind(vwna,city)
-write_csv(vwna,"data/vw_setlist_na_city_pt2.csv")
+write_csv(vwna,"data/vw_setlist_na_city_pt2F.csv")
 
 
-vwc <- read_csv("data/vw_setlist_na_city_pt2.csv")
+vwc <- read_csv("data/vw_setlist_na_city_pt2F.csv")
 
 vwc$date <- as.Date(paste0(vwc$year,"-",vwc$month,"-",vwc$day), format = "%Y-%b-%d")
 
@@ -209,15 +209,15 @@ names(date_num) <- c("date","num")
 date_num$date <- as.Date(date_num$date)
 
 date_num <- date_num %>%
-  left_join(unique(vwc[,c(12,13)]),by = "date")
+  left_join(unique(vwc[,c(13,14)]),by = "date")
 
 date_city <- date_num
 
+ls_cities <- NA
+
 for(i in 1:nrow(date_num)){
   
-  ls_cities <- NA
-  
-  if(date_num$city[i] %in% date_num$city[(i+1):(nrow(date_num)-1)] && !(date_num$city[i] %in% ls_cities)){
+  if(date_num$city[i] %in% date_num$city[(i+1):(nrow(date_num))] && !(date_num$city[i] %in% ls_cities) && i!=nrow(date_num)){
     ord_shows <- which(date_num$city == date_num$city[i])
     num_shows <- 1:length(ord_shows)
     date_city$city[ord_shows] <- paste0(date_num$city[i]," ",num_shows)
@@ -231,40 +231,56 @@ names(date_city) <- c("date","num_show","city_num")
 vwc <- vwc %>%
   left_join(date_city,by="date")
 
+vwc[vwc$city_day == "Indianapolis 21",]$festival <- "VW Show"
+
 vwc$choice_name <- ifelse(vwc$festival == "VW Show", paste0(vwc$city_num,": ",vwc$date),paste0(vwc$festival,": ",vwc$date))
 
+# vwc <- vwc %>% 
+#   filter(
+#     encore == TRUE,
+#     sets %in% c("Walcott", 
+#                 "Worship You",
+#                 "Ya Hey",
+#                 "SNL Closing Theme (A Waltz in A) / Flower Moon")
+#   ) %>%
+#   mutate(
+#     encore = "FALSE"
+#   )
 
+#vwc$encore <- ifelse(vwc$sets %in% c("Walcott", "Worship You", "Ya Hey","SNL Closing Theme (A Waltz in A) / Flower Moon"), "FALSE",vwc$encore)
 
 # ----------------------------
 
-save(vwc, file = "vwshiny/data/vwc_pt2.RData")
+save(vwc, file = "vwshiny/data/vwc_pt2_F.RData")
 
 
-write_csv(vwc, file = "data/vw_setlist_pt2_citynum.csv")
+write_csv(vwc, file = "data/vw_setlist_pt2_F.csv")
 
-songs <- vwd[,1]
+vwc <- vwc[vwc$encore == FALSE,]
+
+songs <- vwc$sets[vwc$encore==FALSE]
 
 songcount <- as.data.frame(table(songs))
 
 deepcuts <- songcount[songcount$Freq == 1,1]
 fivecuts <- songcount[songcount$Freq <= 5,1]
 
-deepcutslist <- vwd %>%
+deepcutslist <- vwc %>%
   filter(
     sets %in% deepcuts
   )
 
-fivecutslist <- vwd %>%
+fivecutslist <- vwc %>%
   filter(
     sets %in% fivecuts
   )
 
 write_csv(deepcutslist, file = "data/deepcutslist.csv")
+write_csv(fivecutslist, file = "data/fivecutslist.csv")
 
 
 
-
-vwna <- vwna %>%
+vwna <- vwc %>%
   mutate(
   venue2 = paste0(venue," ", day)
 )
@@ -284,13 +300,25 @@ cross <- c(unlist(songlist[[2]]),unlist(songlist[[1]]))
 
 (length(cross) - length(unique(cross)))/length(unique(cross))
 
+num_shows <- max(vwc$num_show)
 
-overlap <- matrix(nrow = 58, ncol = 58)
+num_shows_nf <- nrow(unique(vwc[vwc$festival == "VW Show","city_num"]))
 
-for(i in 1:58){
-  for(j in 1:58){
-    cross <- c(unlist(songlist[[59-i]]),unlist(songlist[[59-j]]))
+overlap <- matrix(nrow = num_shows, ncol = num_shows)
+
+for(i in 1:num_shows){
+  for(j in 1:num_shows){
+    cross <- c(unlist(songlist[[num_shows+1-i]]),unlist(songlist[[num_shows+1-j]]))
     overlap[i,j] <- (length(cross) - length(unique(cross)))/length(unique(cross))
+  }
+}
+
+overlap_nf <- matrix(nrow = num_shows_nf, ncol = num_shows_nf)
+
+for(i in 1:num_shows_nf){
+  for(j in 1:num_shows_nf){
+    cross <- c(unlist(songlist[[num_shows_nf+1-i]]),unlist(songlist[[num_shows_nf+1-j]]))
+    overlap_nf[i,j] <- (length(cross) - length(unique(cross)))/length(unique(cross))
   }
 }
 
@@ -326,10 +354,10 @@ for(i in 1:58){
 }
 
 
-rownames(overlap) <- rev(unique(vw$city))
-colnames(overlap) <- rev(unique(vw$city))
+rownames(overlap) <- rev(unique(vwc$city_num))
+colnames(overlap) <- rev(unique(vwc$city_num))
 
-write_csv(as.data.frame(overlap), file = "vwoverlap.csv")
+write_csv(as.data.frame(overlap), file = "data/vwoverlap.csv")
 
 
 #no fests
@@ -548,18 +576,25 @@ album_percentages <- vwc %>%
   summarize(count = n(), .groups = "drop") %>% # Count songs per album per city
   group_by(choice_name) %>% 
   mutate(percentage = (count / sum(count))) %>%
-  ungroup()
+  ungroup() %>%
+  mutate(
+    date_num = dense_rank(date)
+  )
 
 
 album_percentages_nf <- vwc %>%
-  filter(festival == "VW Show")
+  filter(festival == "VW Show") %>%
   group_by(choice_name, album,date) %>% 
   summarize(count = n(), .groups = "drop") %>% # Count songs per album per city
   group_by(choice_name) %>% 
   mutate(percentage = (count / sum(count))) %>%
-  ungroup()
+  ungroup() %>%
+  mutate(
+    date_num = dense_rank(date)
+  )
 
 album_percentages <- left_join(album_percentages,albumcolors,by="album")
+album_percentages_nf <- left_join(album_percentages_nf,albumcolors,by="album")
 
 save(album_percentages,album_percentages_nf,file = "vwshiny/data/album_per.RData")
 
@@ -908,7 +943,7 @@ act7 <- c("W","WY","YH")
 
 #### CLUSTER
 
-showsong <- as.data.frame(unique(cbind(vwd$city.y,vwd$sets)))
+showsong <- as.data.frame(unique(cbind(vwc$num_show,vwc$sets)))
 showsong[,1] <- as.numeric(factor(showsong[,1]))
 
 colnames(showsong) <- c("city_id","song")
@@ -921,6 +956,7 @@ incidence_matrix <- incidence_matrix[,-1]
 # Remove the `show_id` column to focus on the song matrix
 song_matrix <- incidence_matrix
 
+write.csv(incidence_matrix, file = "vwshiny/data/incidence_matrix.csv")
 
 for(i in dim(incidence_matrix)[1]){
   for(j in dim(incidence_matrix)[2]){
@@ -939,6 +975,8 @@ song_totals <- diag(co_occurrence_matrix)
 # Compute the Jaccard Index for each song pair
 similarity_matrix <- co_occurrence_matrix / (outer(song_totals, song_totals, "+") - co_occurrence_matrix)
 
+save(similarity_matrix,file = "vwshiny/data/simmat.RData")
+
 # Perform clustering
 dist_matrix <- as.dist(1 - similarity_matrix)  # Convert similarity to dissimilarity
 hc <- hclust(dist_matrix, method = "complete")
@@ -952,7 +990,7 @@ cluster_assignments <- kmeans_result$cluster
 
 
 library(stringr)
-for(i in 1:56){
+for(i in 1:length(rownames(similarity_matrix))){
   if (nchar(rownames(similarity_matrix)[i]) >12){
     rownames(similarity_matrix)[i] <- str_trunc(rownames(similarity_matrix)[i], 12)
   }
@@ -960,9 +998,9 @@ for(i in 1:56){
 
 colnames(similarity_matrix) <- rownames(similarity_matrix)
 
-write_csv(as.data.frame(similarity_matrix),file = "similaritymatrix.csv")
+write_csv(as.data.frame(similarity_matrix),file = "vwshiny/data/similaritymatrix.csv")
 
-similarity_matrix <- read_csv("similaritymatrix.csv")
+similarity_matrix <- read_csv("vwshiny/data/similaritymatrix.csv")
 
 library(pheatmap)
 pheatmap(similarity_matrix,
@@ -1008,7 +1046,7 @@ P_Y_given_X <- P_X_and_Y / P_X
 P_Y_given_X
 
 
-given <- matrix(NA,56,56)
+given <- matrix(NA,ncol(song_matrix),ncol(song_matrix))
 
 for(i in 1:dim(given)[1]){
   for(j in 1:dim(given)[2]){
@@ -1030,13 +1068,13 @@ for(i in 1:dim(given)[1]){
 colnames(given) <- colnames(similarity_matrix)
 rownames(given) <- rownames(similarity_matrix)
 
-write_csv(data.frame(given),file = "data/given.csv")
+write_csv(data.frame(given),file = "vwshiny/data/given.csv")
 
 given <- as.data.frame(read_csv("data/given.csv"))
 
 rownames(given)<- colnames(given)
 
-pheatmap(given,
+heatmap_plot <- pheatmap(given,
          color = colorRampPalette(c("white", "blue", "darkblue"))(50), # Gradient colors
          cluster_rows = TRUE,   # Enable row clustering
          cluster_cols = TRUE,   # Enable column clustering
@@ -1044,17 +1082,19 @@ pheatmap(given,
          display_numbers = TRUE, # Show similarity values
          number_color = "black") # Number color
 
+save(heatmap_plot, given, file = "vwshiny/data/givenheatmap.RData")
+
 percent_given <- function(given,song1,song2){
   return(given[which(colnames(given) == song1),which(colnames(given) == song2)])
 }
 
 all_percent_given <- function(given,song){
-  return(cbind(rownames(given),given[,which(colnames(given) == song)]))
+  return(unname(cbind(rownames(given),given[,which(colnames(given) == song)])))
 }
 
 percent_given(given,"Connect","Sympathy")
 
-percent_given(given,"Sympathy","Connect")
+percent_given(given,"Sympathy","Ice Cream Piano")
 
 all_percent_given(given,"Sympathy")
 
@@ -1223,13 +1263,15 @@ library(stringr)
 
 vwd <- vwallcoords
 
-song_show <- as.data.frame(cbind(vwd$sets,vwd$city.y,vwd$song_num))
+song_show <- as.data.frame(cbind(vwc$sets,vwc$choice_name,vwc$song_num))
 
-save(song_show,file = "data/songshow.RData")
+save(song_show,file = "vwshiny/data/songshow.RData")
+
+write.csv(song_show,file = "vwshiny/data/songshow.csv")
 
 song_show <- as.data.frame(song_show)
 
-colnames(song_show) <- c("sets","city.y","song_num")
+colnames(song_show) <- c("sets","choice_name","song_num")
 
 song_show <- as.data.frame(cbind(vwc$sets,vwc$choice_name))
 colnames(song_show) <- c("sets","choice_name")
@@ -1243,7 +1285,13 @@ song_show_num_wide <- song_show_num %>%
     values_from = sets
   ) 
 
-#save(song_show_wide,file = "vwshiny/data/song_shows.RData")
+song_show_wide <- song_show %>%
+  pivot_wider(
+    names_from = choice_name,
+    values_from = sets
+  ) 
+
+save(song_show_wide,file = "vwshiny/data/song_shows.RData")
 
 
 max_songs <- 41
@@ -1457,7 +1505,7 @@ for(i in 2:(nrow(vw)-3)){
 table(vw_b4end$sets[which(vw_b4end$last)])
 
   
-vwc <- read.csv("/Users/audrey/vwsongs/vw_set_lists_pt2.csv")
+vwc <- read.csv("data/raw/vw_set_lists_pt2.csv")
 
 
 vwc %>%

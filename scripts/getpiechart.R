@@ -5,12 +5,14 @@ library(treemap)
 library(ggplot2)
 library(plotly)
 
-load("data/setlistalbums.RData")
-load("data/albumcolors.RData")
+#load("data/setlistalbums.RData")
+#load("data/albumcolors.RData")
 
-save(setlist_albums_songs, file = "vwshiny/data/setlistalbums.RData")
 
-setlist_albums_songs <- left_join(vwc[c("choice_name","album","sets")],albumcolors,by = "album")
+
+#save(setlist_albums_songs, file = "vwshiny/data/setlistalbums.RData")
+
+#setlist_albums_songs <- left_join(vwc[c("choice_name","album","sets")],albumcolors,by = "album")
 
 
 
@@ -92,7 +94,7 @@ get_piechart <- function(shows,setlist_albums_songs){
   
 }
 
-shows = unique(setlist_albums_songs$city.y)
+shows = unique(setlist_albums_songs$choice_name)[4:5]
 
 get_piechart(shows,setlist_albums_songs)
 
